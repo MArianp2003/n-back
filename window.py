@@ -1,50 +1,49 @@
 import tkinter as tk
-import config as cfg
+from config import *
 import random
 
 class Window:
     def __init__(self):
         self.set_widgets()
-        
         self.root.bind('<space>', self.press_space)
         self.generate_random_number()
+        self.run()
         
     def set_widgets(self):
         self.root = tk.Tk()
-        self.root.title(cfg.title)
-        self.width_window, self.height_window = cfg.resolution
+        self.root.title(Win_prop.title)
+        self.width_window, self.height_window = Win_prop.resolution
         self.reso = f'{str(self.width_window)}x{str(self.height_window)}'
         self.root.geometry(self.reso)
         
         self.number_label = tk.Label(
             self.root, 
-            text="", 
-            font=('Arial', 60)
+            text="",
+            font=Label_prop.font
         )
         
         self.check_button = tk.Button(
             self.root,
-            text='Check',
-            font=("Arial", 14),
-            width=15, 
-            height=3,
-            bg="#87CEEB",
-            relief="ridge", 
-            borderwidth=4,
+            text=But_prop.text,
+            font=But_prop.font,
+            width=But_prop.width, 
+            height=But_prop.height,
+            bg=But_prop.bg,
+            relief=But_prop.relief, 
+            borderwidth=But_prop.borderwidth,
             command=None #TODO
         )
         
         self.message_label = tk.Label(
             self.root,
             text="", 
-            font=("Arial", 14)
+            font=Message_prop.font
         )
 
-        self.number_label.place(relx=0.5, rely=0.2, anchor='center')
-        self.check_button.place(relx=0.5, rely=0.4, anchor='center')
-        self.message_label.place(relx=0.5, rely=0.6, anchor="center")
-    
-        
+        self.number_label.place(relx=0.5, rely=Label_prop.rely, anchor='center')
+        self.check_button.place(relx=0.5, rely=But_prop.rely, anchor='center')
+        self.message_label.place(relx=0.5, rely=Message_prop.rely, anchor="center")
+            
         
     def on_button_click(self):
         print("hello the message")  # Print the message
@@ -70,3 +69,6 @@ class Window:
     
     def clear_label(self):
         self.message_label.config(text="")  # Clear the label text
+        
+    def run(self):
+        self.root.mainloop()

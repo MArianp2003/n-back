@@ -1,8 +1,7 @@
 from window import Window
 
 def main():
-    w = Window()
-    w.root.mainloop()
+    Window()
 
 if __name__ == '__main__':
     main()
