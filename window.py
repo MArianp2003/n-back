@@ -6,7 +6,6 @@ class Window:
     def __init__(self):
         self.data = list()
         self.set_widgets()
-        self.root.bind('<space>', self.press_space)
         self.start_show_number()
         self.run()
     
@@ -55,22 +54,18 @@ class Window:
         self.number_label.place(relx=0.5, rely=Number_prop.rely, anchor='center')
         self.check_button.place(relx=0.5, rely=But_prop.rely, anchor='center')
         self.message_label.place(relx=0.5, rely=Message_prop.rely, anchor="center")
-            
+        self.root.bind('<space>', self.press_space)
+        
     def run(self):
         self.root.mainloop()
     
-    def on_button_click(self):
-        print("hello the message")  # Print the message
-
     def press_space(self, event):
-        # Change the button's background color to indicate it was pressed
-        original_color = self.check_button.cget("bg")  # Get the original color
-        self.check_button.config(bg="yellow")  # Change to a blinking color
-        self.on_button_click()  # Call the button click function
-        
+        original_color = self.check_button.cget('bg')  # Get the original color
+        self.check_button.config(bg='yellow')  # Change to a blinking color
+        print("hello the message")  # Print the message
         self.message_label.config(text="you hit the press key")  # Set the label text
         
         # Clear the label after 500ms
-        self.root.after(500, self.clear_label)
+        self.root.after(500, lambda: self.message_label.config(text=''))
 
-        self.root.after(200, lambda: self.check_button.config(bg=original_color))  # Revert color after 200ms
+        self.root.after(20, lambda: self.check_button.config(bg=original_color))  # Revert color after 200ms
