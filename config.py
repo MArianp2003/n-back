@@ -2,10 +2,11 @@ class Win_prop:
     resolution = (600, 600)
     title = 'N-Back Visual Program'
 
-class Label_prop:
+class Number_prop:
     font = ('Arial', 80)
     rely = 0.3
-
+    show_wait = 500 # ms
+    sleep_wait = 2000 # ms
 class But_prop:
     font = ('Arial', 14)
     text = 'Check',
