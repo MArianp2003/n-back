@@ -18,7 +18,7 @@ class Window:
         self.root.geometry(self.reso)
 
         self.input_frame = tk.Frame(self.root)
-        prompt_label = tk.Label(
+        self.prompt_label = tk.Label(
             self.input_frame, 
             text="Name:", 
             font=("Helvetica", 12)
@@ -82,7 +82,7 @@ class Window:
         self.timer_label.place(relx=0.05, rely=0.08)
         self.input_frame.place(relx=0.8, rely=0.1, anchor='center')
         self.submit_button.place(relx=0.8, rely=0.15, anchor='center')
-        prompt_label.pack(side="left")
+        self.prompt_label.pack(side="left")
         self.name_entry.pack(side="left")
         self.root.bind('<space>', self.take_action)
         self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
@@ -96,6 +96,9 @@ class Window:
         if not self.name_entry.get():
             messagebox.showerror('ERROR!', message='Name can not be empty')
         else:
+            self.name_entry.config(state='disabled')
+            self.prompt_label.config(state='disabled')
+            self.submit_button.config(state='disabled')
             self.timer_label.config(state='normal')
             self.number_label.config(state='normal')
             self.number_label.config(text='Ready?')
@@ -141,5 +144,4 @@ class Window:
             self.root.after(1000, self.update_timer)
         else:
             self.root.destroy()
-    
     
