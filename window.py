@@ -12,26 +12,29 @@ class Window:
     
     def set_widgets(self):
         self.root = tk.Tk()
-        self.root.title(Win_prop.title)
-        self.width_window, self.height_window = Win_prop.resolution
+        self.root.title('N-Back Visual Program')
+        self.width_window, self.height_window = (600, 600)
         self.reso = f'{str(self.width_window)}x{str(self.height_window)}'
         self.root.geometry(self.reso)
 
-        self.input_frame = tk.Frame(self.root)
+        self.input_frame = tk.Frame(
+            master=self.root
+        )
+        
         self.prompt_label = tk.Label(
-            self.input_frame, 
+            master=self.input_frame, 
             text="Name:", 
             font=("Helvetica", 12)
         )
         
         self.name_entry = tk.Entry(
-            self.input_frame, 
+            master=self.input_frame, 
             font=("Helvetica", 12), 
             width=20
         )
 
         self.submit_button = tk.Button(
-            self.root, 
+            master=self.root, 
             text="Submit", 
             font=("Helvetica", 12), 
             command=self.login,
@@ -41,44 +44,44 @@ class Window:
 
         self.countdown_time = Time.countdown_time
         self.timer_label = tk.Label(
-            self.root,
+            master=self.root,
             text=f'Time left: 10:00',
-            font=Time.font,
+            font=("Helvetica", 12, 'bold'),
             state='disabled'
         )
         
         self.number_label = tk.Label(
-            self.root, 
+            master=self.root, 
             text="Waiting to submit",
-            font=Number_prop.font,
+            font=('Arial', 24),
             state='disabled'
         )
         
         self.check_button = tk.Button(
-            self.root,
-            text=But_prop.text,
-            font=But_prop.font,
-            width=But_prop.width, 
-            height=But_prop.height,
-            bg=But_prop.bg,
-            relief=But_prop.relief, 
-            borderwidth=But_prop.borderwidth,
-            activebackground=But_prop.activebackground,
-            activeforeground=But_prop.activeforeground,
+            master=self.root,
+            text='Check',
+            font=('Arial', 14),
+            width = 15, 
+            height = 3,
+            bg = "#87CEEB", #light blue
+            relief = "ridge", 
+            borderwidth=4,
+            activebackground='yellow',
+            activeforeground='black',
             command=self.Click_Button,
             state='disabled'
         )
         
         self.message_label = tk.Label(
-            self.root,
+            master=self.root,
             text="", 
-            font=Message_prop.font,
+            font=("Arial", 24),
             state='disabled'
         )
 
-        self.number_label.place(relx=0.5, rely=Number_prop.rely, anchor='center')
-        self.check_button.place(relx=0.5, rely=But_prop.rely, anchor='center')
-        self.message_label.place(relx=0.5, rely=Message_prop.rely, anchor="center")
+        self.number_label.place(relx=0.5, rely=0.4, anchor='center')
+        self.check_button.place(relx=0.5, rely=0.7, anchor='center')
+        self.message_label.place(relx=0.5, rely=0.85, anchor="center")
         self.timer_label.place(relx=0.05, rely=0.08)
         self.input_frame.place(relx=0.8, rely=0.1, anchor='center')
         self.submit_button.place(relx=0.8, rely=0.15, anchor='center')
@@ -88,7 +91,7 @@ class Window:
         self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
     
     def start_counting(self):
-        self.number_label.config(font=Number_prop.after_login_font)
+        self.number_label.config(font=('Arial', 80))
         self.update_timer()
         self.start_show_number()
 
