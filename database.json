@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "name": "a",
+        "data": "2,0,2,3,0",
+        "latencies": "0.39,0.25,0.28",
+        "correct": 1,
+        "incorrect": 2,
+        "uncatched": 0,
+        "other": 0
+    }
+]

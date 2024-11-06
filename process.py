@@ -1,7 +1,7 @@
 from config import Mode
 import json
 
-def check_all_n_back(name: str, data: list, catched: dict):
+def check_all_n_back(name: str, data: list, catched: dict, latencies: list):
     
     happen_n_back = {}
     for i in range(len(data) - Mode.n_back_mode):
@@ -16,11 +16,12 @@ def check_all_n_back(name: str, data: list, catched: dict):
             
     incorrect = len(catched) - correct
     uncatched = len(happen_n_back) - correct
-    other = len(data) - Mode.n_back_mode + 1 - (incorrect + correct + uncatched)
+    other = len(data) - Mode.n_back_mode - (incorrect + correct + uncatched)
     
     result = {
         'name': name,
-        'data': ','.join(map(str, data)), 
+        'data': ','.join(map(str, data)),
+        'latencies': ','.join(map(str, latencies)), 
         'correct': correct, 
         'incorrect': incorrect, 
         'uncatched': uncatched, 
@@ -34,8 +35,3 @@ def check_all_n_back(name: str, data: list, catched: dict):
     
     with open('database.json', 'w') as json_file:
         json.dump(data_list, json_file, indent=4)
-        
-    with open('result.json', 'w') as json_file:
-        json.dump(result, json_file, indent=4)
-    
-    

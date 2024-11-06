@@ -7,3 +7,6 @@ class Time:
     
 class Mode:
     n_back_mode = 2
+
+class Digit_round:
+    digit_round = 3
