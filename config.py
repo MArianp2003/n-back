@@ -3,7 +3,7 @@ class Number_prop:
     sleep_wait = 3000 # ms
         
 class Time:
-    countdown_time = 5 * 60 # seconds 
+    countdown_time = 5 * 60 # seconds
     
 class Mode:
     n_back_mode = 2

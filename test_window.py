@@ -5,7 +5,7 @@ from process import *
 import random
 from datetime import datetime
 
-class Window:
+class Test_Window:
     def __init__(self):
         self.forcequit = False
         self.new_number_lock = False
@@ -130,12 +130,12 @@ class Window:
         self.test_frame.place(relx=0.5, rely=0.6, anchor='center')
         
         self.root.bind('<space>', self.take_action)
-        self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
+        self.root.protocol('WM_DELETE_Test_Window', self.on_closing)
     
     def on_closing(self):
         if messagebox.askyesno(title='Exit?', message='Are you sure you want to quit?'):
             self.forcequit = True
-            self.close_window()
+            self.close_Test_Window()
     
     def run(self):
         self.root.mainloop()
@@ -221,7 +221,7 @@ class Window:
             self.root.after(1000, self.update_timer)
         elif not self.forcequit:
                 self.result = check_all_n_back(self.name, self.data, self.catch, self.latencies)
-                self.close_window()
+                self.close_Test_Window()
     
-    def close_window(self):
+    def close_Test_Window(self):
         self.root.destroy()

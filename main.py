@@ -1,8 +1,8 @@
-from window import Window
-from monitor_result import Monitor_Window
+from test_window import Test_Window
+from monitor_window import Monitor_Window
 
 def main():
-    w = Window()
+    w = Test_Window()
     w.run()
     
 if __name__ == '__main__':
