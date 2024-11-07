@@ -1,5 +1,6 @@
-from config import Mode
+from config import Mode, DataBase, key_headers
 import json
+import csv
 
 def check_all_n_back(name: str, data: list, catched: dict, latencies: list):
     
@@ -28,10 +29,15 @@ def check_all_n_back(name: str, data: list, catched: dict, latencies: list):
         'other': other 
     }
     
-    with open('database.json', 'r') as json_file:
+    with open(DataBase.json_file, 'r') as json_file:
         data_list = json.load(json_file)
+    
+    with open(DataBase.csv_file, 'a', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=key_headers)
+        writer.writerow(result)
     
     data_list.append(result)
     
     with open('database.json', 'w') as json_file:
         json.dump(data_list, json_file, indent=4)
+        

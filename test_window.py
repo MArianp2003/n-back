@@ -4,7 +4,7 @@ from config import *
 from process import *
 import random
 from datetime import datetime
-
+from time import sleep
 class Test_Window:
     def __init__(self):
         self.force_quit = False
@@ -130,7 +130,7 @@ class Test_Window:
         self.test_frame.place(relx=0.5, rely=0.6, anchor='center')
         
         self.root.bind('<space>', self.take_action)
-        self.root.protocol('WM_DELETE_Test_Window', self.on_closing)
+        self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
     
     def on_closing(self):
         if messagebox.askyesno(title='Exit?', message='Are you sure you want to quit?'):
@@ -145,6 +145,7 @@ class Test_Window:
         self.entry_minutes.pack_forget()
         self.colon_label.pack_forget()
         self.number_label.config(font=('Arial', 80))
+        self.timer_label.config(font=('Arial', 16))
         self.update_timer()
         self.start_show_number()
 
@@ -206,7 +207,7 @@ class Test_Window:
                 self.new_number_lock = True
                 self.elapsed_time = self.d2 - self.d1
                 self.message_label.config(text=f'Check submitted!')
-                self.latencies.append(round(self.elapsed_time.total_seconds(), Digit_round.digit_round))
+                self.latencies.append(round(self.elapsed_time.total_seconds(), DigitRound.digit_round))
         self.message_label.after(1000, lambda: self.message_label.config(text=''))
             
     def Click_Button(self):
@@ -221,8 +222,7 @@ class Test_Window:
             self.root.after(1000, self.update_timer)
         elif not self.force_quit:
                 self.result = check_all_n_back(self.name, self.data, self.catch, self.latencies)
-                self.number_label.config(text='Thank you!')
-                self.root.after(1000, lambda: self.close_Test_Window())
+                self.close_Test_Window()
     
     def close_Test_Window(self):
         self.root.destroy()

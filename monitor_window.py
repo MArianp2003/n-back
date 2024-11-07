@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import json
-
+from config import key_headers
 class Monitor_Window:
     
     def __init__(self):
@@ -130,6 +130,7 @@ class Monitor_Window:
         self.other_entry.grid(row=6, column=1, padx=10)
         self.search_button.grid(row=7, column=0, columnspan=2, pady=20)
         self.root.bind('<Return>', func=self.search_key)
+        self.root.protocol('WM_DELETE_WINDOW', func=self.on_closing)
         
     def set_and_set(self, widget, d):
         widget.config(state='normal')
@@ -149,30 +150,25 @@ class Monitor_Window:
             self.uncatched_entry, 
             self.other_entry
         ]
-        names = [
-            "data",
-            "latencies",
-            "correct",
-            "incorrect",
-            "uncatched",
-            "other"
-        ]
         not_found = True
         for item in self.raw_data:
+            if not not_found:
+                break
             if self.name_entry.get() == item.get('name'):
                 not_found = False
-                for widget, name in zip(widgets, names):
+                for widget, name in zip(widgets, key_headers[1:]):
                     self.set_and_set(widget, item.get(name))
+                
         if not_found:
             messagebox.showinfo('Search Failed', message=f'There is not information about {self.name_entry.get()}')
+    
     def run(self):
         self.root.mainloop()
-        
-        
-def main():
-    m = Monitor_Window()
-    m.run()
-
-if __name__ == '__main__':
-    main()
     
+    def on_closing(self):
+        if messagebox.askyesno(title='Exit?', message='Are you sure you want to quit?'):
+            self.close_Monitor_Window()
+
+    def close_Monitor_Window(self):
+        self.root.destroy()
+        

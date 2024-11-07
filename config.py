@@ -8,5 +8,22 @@ class Time:
 class Mode:
     n_back_mode = 2
 
-class Digit_round:
+class DigitRound:
     digit_round = 3
+    
+class DataBase:
+    json_file = 'database.json'
+    csv_file = 'database.csv'
+
+key_headers = [
+    'name',
+    'data',
+    'latencies',
+    'correct',
+    'incorrect',
+    'uncatched',
+    'other',
+]
+
+class MonitorMode:
+    run_mode = 'test'
