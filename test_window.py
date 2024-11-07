@@ -7,7 +7,7 @@ from datetime import datetime
 
 class Test_Window:
     def __init__(self):
-        self.forcequit = False
+        self.force_quit = False
         self.new_number_lock = False
         self.countdown_time = Time.countdown_time
         self.data = list()
@@ -134,7 +134,7 @@ class Test_Window:
     
     def on_closing(self):
         if messagebox.askyesno(title='Exit?', message='Are you sure you want to quit?'):
-            self.forcequit = True
+            self.force_quit = True
             self.close_Test_Window()
     
     def run(self):
@@ -179,7 +179,7 @@ class Test_Window:
             self.number_label.after(1000, self.start_counting)
     
     def generate_and_set(self):
-        random_number = random.randint(0, 3)
+        random_number = random.randint(0, 9)
         self.data.append(random_number)
         return random_number
     
@@ -219,9 +219,10 @@ class Test_Window:
         if self.countdown_time > 0:
             self.countdown_time -= 1
             self.root.after(1000, self.update_timer)
-        elif not self.forcequit:
+        elif not self.force_quit:
                 self.result = check_all_n_back(self.name, self.data, self.catch, self.latencies)
-                self.close_Test_Window()
+                self.number_label.config(text='Thank you!')
+                self.root.after(1000, lambda: self.close_Test_Window())
     
     def close_Test_Window(self):
         self.root.destroy()
