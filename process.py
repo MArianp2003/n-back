@@ -40,4 +40,3 @@ def check_all_n_back(name: str, data: list, catched: dict, latencies: list):
     
     with open('database.json', 'w') as json_file:
         json.dump(data_list, json_file, indent=4)
-        

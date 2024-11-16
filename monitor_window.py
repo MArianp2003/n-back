@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import json
 from config import key_headers
+
 class Monitor_Window:
     
     def __init__(self):

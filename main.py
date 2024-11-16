@@ -1,6 +1,7 @@
 from test_window import Test_Window
 from monitor_window import Monitor_Window
 from config import MonitorMode
+
 def main():
     match MonitorMode.run_mode:
         case 'test':

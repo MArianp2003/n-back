@@ -26,4 +26,4 @@ key_headers = [
 ]
 
 class MonitorMode:
-    run_mode = 'test'
+    run_mode = 'monitor'
