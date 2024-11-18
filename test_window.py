@@ -10,6 +10,7 @@ class Test_Window:
         self.force_quit = False
         self.new_number_lock = False
         self.countdown_time = Time.countdown_time
+        self.latencies_at_time = list()
         self.data = list()
         self.latencies = list()
         self.catch = dict()
@@ -129,7 +130,6 @@ class Test_Window:
         self.message_label.pack()
         self.test_frame.place(relx=0.5, rely=0.6, anchor='center')
         
-        self.root.bind('<space>', self.take_action)
         self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
     
     def on_closing(self):
@@ -177,10 +177,14 @@ class Test_Window:
                 widget.config(state='normal')
             self.number_label.config(text='Ready?')
             self.countdown_time = self.m * 60 + self.s
+            self.countdown_time += 2 - (self.countdown_time) % 3
+            self.time_left = self.countdown_time 
             self.number_label.after(1000, self.start_counting)
+            self.root.bind('<space>', self.take_action)
+
     
     def generate_and_set(self):
-        random_number = random.randint(0, 9)
+        random_number = random.randint(0, 2)
         self.data.append(random_number)
         return random_number
     
@@ -202,12 +206,17 @@ class Test_Window:
             self.message_label.config(text= 'lack of data for test n-back')
         else:
             index = len(self.data) - Mode.n_back_mode - 1
-            self.catch.update({index: self.data[index:]})
             if not self.new_number_lock:
                 self.new_number_lock = True
-                self.elapsed_time = self.d2 - self.d1
                 self.message_label.config(text=f'Check submitted!')
-                self.latencies.append(round(self.elapsed_time.total_seconds(), DigitRound.digit_round))
+                self.seq = self.data[index:]
+                self.elapsed_time = (self.d2 - self.d1).total_seconds()
+                self.latencies_at_time = self.time_left - self.countdown_time
+                self.catch.update({index: (
+                    self.seq, 
+                    f'{self.latencies_at_time // 60:02}:{self.latencies_at_time % 60:02}',
+                    round(self.elapsed_time, DigitRound.digit_round)    
+                )})
         self.message_label.after(1000, lambda: self.message_label.config(text=''))
             
     def Click_Button(self):
@@ -221,8 +230,9 @@ class Test_Window:
             self.countdown_time -= 1
             self.root.after(1000, self.update_timer)
         elif not self.force_quit:
-                self.result = check_all_n_back(self.name, self.data, self.catch, self.latencies)
-                self.close_Test_Window()
+                self.result = check_all_n_back(self.name, self.data, self.catch, self.time_left)
+                self.number_label.config(text='Thank You!')
+                self.number_label.after(800, self.close_Test_Window)
     
     def close_Test_Window(self):
         self.root.destroy()

@@ -18,11 +18,12 @@ class DataBase:
 key_headers = [
     'name',
     'data',
-    'latencies',
     'correct',
-    'incorrect',
-    'uncatched',
+    'incorrect', 
+    'uncatched', 
     'other',
+    'correct_catched',
+    'time_duration',
 ]
 
 class MonitorMode:

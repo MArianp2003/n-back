@@ -1,6 +1,5 @@
 from config import DataBase, key_headers
-import json 
-import csv
+import json, csv
 
 def main():
     with open('database.json', 'w') as json_file:
