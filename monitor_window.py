@@ -206,3 +206,12 @@ class Monitor_Window:
         self.at_times_entry.config(width=l)
         self.latencies_entry.config(width=l)
         self.time_duration_entry.config(width=l)
+
+
+def main():
+    t = Monitor_Window()
+    t.run()
+
+if __name__ == '__main__':
+    main()
+    

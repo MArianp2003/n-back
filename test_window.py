@@ -236,3 +236,11 @@ class Test_Window:
     
     def close_Test_Window(self):
         self.root.destroy()
+
+def main():
+    t = Test_Window()
+    t.run()
+
+if __name__ == '__main__':
+    main()
+    
