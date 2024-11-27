@@ -221,10 +221,11 @@ class Monitor_Window:
         self.latencies_entry.config(width=l)
         self.time_duration_entry.config(width=l)
         self.mode_entry.config(width=l)
+        
 
 def main():
-    m = Monitor_Window()
-    m.run()
-    
+    t = Monitor_Window()
+    t.run()
+
 if __name__ == '__main__':
     main()

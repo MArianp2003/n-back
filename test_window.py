@@ -260,8 +260,9 @@ class Test_Window:
         self.root.destroy()
 
 def main():
-    m = Test_Window()
-    m.run()
-    
+    t = Test_Window()
+    t.run()
+
 if __name__ == '__main__':
     main()
+    
