@@ -24,7 +24,9 @@ key_headers = [
     'other',
     'correct_catched',
     'time_duration',
+    'mode',
 ]
 
 class MonitorMode:
     run_mode = 'monitor'
+    

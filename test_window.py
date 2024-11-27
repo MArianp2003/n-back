@@ -10,6 +10,7 @@ class Test_Window:
         self.force_quit = False
         self.new_number_lock = False
         self.countdown_time = Time.countdown_time
+        self.n_mode = Mode.n_back_mode
         self.latencies_at_time = list()
         self.data = list()
         self.latencies = list()
@@ -50,9 +51,25 @@ class Test_Window:
             master=self.time_frame,
             width=5,
             font=("Helvetica", 16),
-            textvariable='0'
         )
         self.entry_seconds.insert(0, '00')
+        
+        self.mode_frame = tk.Frame(
+            master=self.root,
+        )
+        
+        self.mode_label = tk.Label(
+            master=self.mode_frame,
+            font=("Helvetica", 12, 'bold'),
+            text='Mode:',
+        )
+        
+        self.mode_entry = tk.Entry(
+            master=self.mode_frame,
+            width=11,
+            font=("Helvetica", 16),
+        )
+        self.mode_entry.insert(0, str(Mode.n_back_mode))
         
         self.name_frame = tk.Frame(
             master=self.root,
@@ -118,8 +135,12 @@ class Test_Window:
         self.entry_minutes.pack(side='left')
         self.colon_label.pack(side='left')
         self.entry_seconds.pack(side='left')
-        self.time_frame.place(relx=0.2, rely=0.15, anchor='center')
-
+        self.time_frame.place(relx=0.2, rely=0.13, anchor='center')
+        
+        self.mode_label.pack(side='left')
+        self.mode_entry.pack(side='left')
+        self.mode_frame.place(relx=0.2, rely=0.18, anchor='center')
+        
         self.prompt_label.pack(fill='x', side='top')
         self.name_entry.pack(fill='x')
         self.submit_button.pack(pady=10) 
@@ -171,12 +192,13 @@ class Test_Window:
             self.s = int(self.entry_seconds.get())
             for widget in self.name_frame.winfo_children():
                 widget.config(state='disabled')
-            for widget in self.name_frame.winfo_children():
+            for widget in self.mode_frame.winfo_children():
                 widget.config(state='disabled')
             for widget in self.test_frame.winfo_children():
                 widget.config(state='normal')
             self.number_label.config(text='Ready?')
             self.countdown_time = self.m * 60 + self.s
+            self.n_mode = int(self.mode_entry.get())
             self.countdown_time += 2 - (self.countdown_time) % 3
             self.time_left = self.countdown_time 
             self.number_label.after(1000, self.start_counting)
@@ -184,7 +206,7 @@ class Test_Window:
 
     
     def generate_and_set(self):
-        random_number = random.randint(0, 2)
+        random_number = random.randint(0, 9)
         self.data.append(random_number)
         return random_number
     
@@ -202,10 +224,10 @@ class Test_Window:
         original_color = self.check_button.cget('bg')
         self.check_button.config(bg='yellow')
         self.check_button.after(100, lambda: self.check_button.config(bg=original_color))    
-        if (len(self.data) < Mode.n_back_mode + 1):
+        if (len(self.data) < self.n_mode + 1):
             self.message_label.config(text= 'lack of data for test n-back')
         else:
-            index = len(self.data) - Mode.n_back_mode - 1
+            index = len(self.data) - self.n_mode - 1
             if not self.new_number_lock:
                 self.new_number_lock = True
                 self.message_label.config(text=f'Check submitted!')
@@ -230,9 +252,16 @@ class Test_Window:
             self.countdown_time -= 1
             self.root.after(1000, self.update_timer)
         elif not self.force_quit:
-                self.result = check_all_n_back(self.name, self.data, self.catch, self.time_left)
+                self.result = check_all_n_back(self.name, self.data, self.catch, self.time_left, self.n_mode)
                 self.number_label.config(text='Thank You!')
                 self.number_label.after(800, self.close_Test_Window)
     
     def close_Test_Window(self):
         self.root.destroy()
+
+def main():
+    m = Test_Window()
+    m.run()
+    
+if __name__ == '__main__':
+    main()

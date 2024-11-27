@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import json
-from config import key_headers
+
 class Monitor_Window:
     
     def __init__(self):
@@ -24,7 +24,7 @@ class Monitor_Window:
         # Row 0: name
         self.name_label = tk.Label(
             master=self.frame,
-            text='name:', 
+            text='Name:', 
             font=('Arial', 14, 'bold')
         )
         self.name_entry = tk.Entry(
@@ -35,7 +35,7 @@ class Monitor_Window:
         # Row 1: correct
         self.correct_label = tk.Label(
             master=self.frame, 
-            text='correct:', 
+            text='Correct:', 
             font=('Arial', 14, 'bold')
         )
         self.correct_entry = tk.Entry(
@@ -47,7 +47,7 @@ class Monitor_Window:
         # Row 2: incorrect
         self.incorrect_label = tk.Label(
             master=self.frame, 
-            text='incorrect:', 
+            text='Incorrect:', 
             font=('Arial', 14, 'bold')
         )
         self.incorrect_entry = tk.Entry(
@@ -59,7 +59,7 @@ class Monitor_Window:
         # Row 3: uncatched
         self.uncatched_label = tk.Label(
             self.frame, 
-            text='uncatched:', 
+            text='Uncatched:', 
             font=('Arial', 14, 'bold')
         )
         self.uncatched_entry = tk.Entry(
@@ -71,7 +71,7 @@ class Monitor_Window:
         # Row 4: other
         self.other_label = tk.Label(
             master=self.frame, 
-            text='other:', 
+            text='Other:', 
             font=('Arial', 14, 'bold')
         )
         self.other_entry = tk.Entry(
@@ -83,7 +83,7 @@ class Monitor_Window:
         # Row 5: at_times
         self.at_times_label = tk.Label(
             master=self.frame,
-            text='at times:',
+            text='At times:',
             font=('Arial', 14, 'bold'),
         )
         self.at_times_entry = tk.Entry(
@@ -95,7 +95,7 @@ class Monitor_Window:
         # Row 6: latencies
         self.latencies_label = tk.Label(
             master=self.frame, 
-            text='latencies:', 
+            text='Latencies:', 
             font=('Arial', 14, 'bold')
         )
         self.latencies_entry = tk.Entry(
@@ -107,7 +107,7 @@ class Monitor_Window:
         # Row 7: time duration
         self.time_duration_label = tk.Label(
             master=self.frame,
-            text='time_duration:',
+            text='Time_duration:',
             font=('Arial', 14, 'bold'),
         )
         self.time_duration_entry = tk.Entry(
@@ -116,7 +116,19 @@ class Monitor_Window:
             state='readonly',
         )
 
-        # Row 8: search button spanning two columns
+        # Row 8: mode
+        self.mode_label = tk.Label(
+            master=self.frame,
+            text='Mode:',
+            font=('Arial', 14, 'bold'),
+        )
+        self.mode_entry = tk.Entry(
+            master=self.frame,
+            font=('Arial', 14),
+            state='readonly',
+        )
+
+        # Row 9: search button spanning two columns
         self.search_button = tk.Button(
             master=self.frame, 
             text="Search", 
@@ -130,20 +142,20 @@ class Monitor_Window:
         self.name_entry.grid(row=0, column=1, padx=10)
         self.correct_label.grid(row=1, column=0, sticky='e')
         self.correct_entry.grid(row=1, column=1, padx=10)
-        self.latencies_label.grid(row=2, column=0, sticky='e')
-        self.latencies_entry.grid(row=2, column=1, padx=10)
-        self.incorrect_label.grid(row=3, column=0, sticky='e')
-        self.incorrect_entry.grid(row=3, column=1, padx=10)
-        self.uncatched_label.grid(row=4, column=0, sticky='e')
-        self.uncatched_entry.grid(row=4, column=1, padx=10)
-        self.other_label.grid(row=5, column=0, sticky='e')
-        self.other_entry.grid(row=5, column=1, padx=10)
-        self.at_times_label.grid(row=6, column=0, sticky='e')
-        self.at_times_entry.grid(row=6, column=1, padx=10)
-        self.latencies_label.grid(row=7, column=0, sticky='e')
-        self.latencies_entry.grid(row=7, column=1, padx=10)
-        self.time_duration_label.grid(row=8, column=0, sticky='e')
-        self.time_duration_entry.grid(row=8, column=1, padx=10)
+        self.incorrect_label.grid(row=2, column=0, sticky='e')
+        self.incorrect_entry.grid(row=2, column=1, padx=10)
+        self.uncatched_label.grid(row=3, column=0, sticky='e')
+        self.uncatched_entry.grid(row=3, column=1, padx=10)
+        self.other_label.grid(row=4, column=0, sticky='e')
+        self.other_entry.grid(row=4, column=1, padx=10)
+        self.at_times_label.grid(row=5, column=0, sticky='e')
+        self.at_times_entry.grid(row=5, column=1, padx=10)
+        self.latencies_label.grid(row=6, column=0, sticky='e')
+        self.latencies_entry.grid(row=6, column=1, padx=10)
+        self.time_duration_label.grid(row=7, column=0, sticky='e')
+        self.time_duration_entry.grid(row=7, column=1, padx=10)
+        self.mode_label.grid(row=8, column=0, sticky='e')
+        self.mode_entry.grid(row=8, column=1, padx=10)
         self.search_button.grid(row=9, column=0, columnspan=2, pady=10)
         
         self.root.bind('<Return>', func=self.search_key)
@@ -180,8 +192,10 @@ class Monitor_Window:
                 self.set_and_set(self.at_times_entry, all_times_in_str or 'None')
                 self.set_and_set(self.latencies_entry, all_latencies_in_str or 'None')
                 self.set_and_set(self.time_duration_entry, item.get('time_duration'))
+                self.set_and_set(self.mode_entry, item.get('mode'))
                 max_len = len(all_times_in_str)
                 self.set_width_all_entries(max_len)
+                
                 
         if not_found:
             messagebox.showinfo('Search Failed', message=f'There is not information about {self.name_entry.get()}')
@@ -206,3 +220,11 @@ class Monitor_Window:
         self.at_times_entry.config(width=l)
         self.latencies_entry.config(width=l)
         self.time_duration_entry.config(width=l)
+        self.mode_entry.config(width=l)
+
+def main():
+    m = Monitor_Window()
+    m.run()
+    
+if __name__ == '__main__':
+    main()

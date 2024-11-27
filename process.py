@@ -1,12 +1,12 @@
-from config import Mode, DataBase, key_headers
+from config import DataBase, key_headers
 import json
 import csv
 
-def check_all_n_back(name: str, data: list, catched: dict, time_duration: int):
+def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n_mode: int):
     
     happen_n_back = dict()
-    for i in range(len(data) - Mode.n_back_mode):
-        sliced = data[i: i + Mode.n_back_mode + 1]
+    for i in range(len(data) - n_mode):
+        sliced = data[i: i + n_mode + 1]
         if sliced[0] == sliced[-1]:
             happen_n_back.update({i: sliced})
     
@@ -19,7 +19,7 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int):
     correct = len(n_back_is_correct)
     incorrect = len(catched) - len(n_back_is_correct)
     uncatched = len(happen_n_back) - len(n_back_is_correct)
-    other = len(data) - Mode.n_back_mode - len(happen_n_back)
+    other = len(data) - n_mode - len(happen_n_back)
     
     print(data)
     print(json.dumps(catched, indent=4))
@@ -33,7 +33,8 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int):
         'uncatched': uncatched, 
         'other': other,
         'correct_catched': n_back_is_correct,
-        'time_duration': f'{time_duration // 60:02}:{time_duration % 60:02}'
+        'time_duration': f'{time_duration // 60:02}:{time_duration % 60:02}',
+        'mode': n_mode,
     }
     
     with open(DataBase.json_file, 'r') as json_file:
