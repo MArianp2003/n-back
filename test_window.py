@@ -184,7 +184,7 @@ class Test_Window:
 
     
     def generate_and_set(self):
-        random_number = random.randint(0, 2)
+        random_number = random.randint(0, 9)
         self.data.append(random_number)
         return random_number
     
