@@ -4,7 +4,7 @@ from config import *
 from process import *
 import random
 from datetime import datetime
-from time import sleep
+
 class Test_Window:
     def __init__(self):
         self.force_quit = False
@@ -43,6 +43,7 @@ class Test_Window:
             font=("Helvetica", 16),
         )
         self.entry_minutes.insert(0, '5')
+        self.entry_minutes.config(state='readonly')
         
         self.colon_label = tk.Label(
             master=self.time_frame, 
@@ -57,6 +58,7 @@ class Test_Window:
             font=("Helvetica", 16),
         )
         self.entry_seconds.insert(0, '00')
+        self.entry_seconds.config(state='readonly')
         
         self.mode_frame = tk.Frame(
             master=self.root,
@@ -76,6 +78,7 @@ class Test_Window:
             font=("Helvetica", 16),
         )
         self.mode_entry.insert(0, str(Mode.n_back_mode))
+        self.mode_entry.config(state='readonly')
         
         self.name_frame = tk.Frame(
             master=self.root,
@@ -164,6 +167,34 @@ class Test_Window:
         
         self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
     
+    def generate_3back_sequence(self):
+        total_numbers = 92  # Total length of the sequence
+        numbers_per_group = 18  # Numbers in each group
+        required_3backs_per_group = 4  # Required 3-back occurrences per group
+        range_of_numbers = 10  # Range of numbers (0 to 9)
+        
+        sequence = []
+        
+        for _ in range(total_numbers // numbers_per_group):
+            group_numbers = []
+            three_back_indices = random.sample(range(numbers_per_group - 3), required_3backs_per_group)
+            current_group_3backs = 0
+            
+            for i in range(numbers_per_group):
+                if i >= 3 and current_group_3backs < required_3backs_per_group and i - 3 in three_back_indices:
+                    group_numbers.append(group_numbers[i - 3])
+                    current_group_3backs += 1
+                else:
+                    new_number = random.randint(0, range_of_numbers - 1)
+                    while i >= 3 and new_number == group_numbers[i - 3]:
+                        new_number = random.randint(0, range_of_numbers - 1)
+                    group_numbers.append(new_number)
+            
+            sequence.extend(group_numbers)
+        
+        return sequence
+
+    
     def on_closing(self):
         if messagebox.askyesno(title='Exit?', message='Are you sure you want to quit?'):
             self.force_quit = True
@@ -187,6 +218,9 @@ class Test_Window:
         self.test_frame.config(pady=80)
         self.test_frame.place(relx=0.5, rely=0.5, anchor='center')
         self.timer_label.config(font=('Arial', 16))
+        self.data = self.generate_3back_sequence()
+        print(self.data)
+        self.data_index = 0
         self.update_timer()
         self.start_show_number()
 
@@ -217,17 +251,17 @@ class Test_Window:
             for widget in self.test_frame.winfo_children():
                 widget.config(state='normal')
             self.number_label.config(text='Ready?')
-            self.countdown_time = self.m * 60 + self.s
+            self.countdown_time = self.m * 60 + self.s - 1
+            self.countdown_time = 12
             self.n_mode = int(self.mode_entry.get())
-            self.countdown_time += 2 - (self.countdown_time) % 3
             self.time_left = self.countdown_time 
             self.number_label.after(1000, self.start_counting)
             self.root.bind('<space>', self.take_action)
 
     
     def generate_and_set(self):
-        random_number = random.randint(0, 9)
-        self.data.append(random_number)
+        random_number = self.data[self.data_index]
+        self.data_index += 1
         return random_number
     
     def start_show_number(self):
