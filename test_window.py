@@ -252,7 +252,6 @@ class Test_Window:
                 widget.config(state='normal')
             self.number_label.config(text='Ready?')
             self.countdown_time = self.m * 60 + self.s - 1
-            self.countdown_time = 12
             self.n_mode = int(self.mode_entry.get())
             self.time_left = self.countdown_time 
             self.number_label.after(1000, self.start_counting)
