@@ -22,15 +22,18 @@ class Test_Window:
         self.root = tk.Tk()
         self.root.title('N-Back Visual Program')
         self.root.geometry('600x600')
+        self.root.configure(background=Color.green)
         
         self.time_frame = tk.Frame(
             master=self.root,
+            background=Color.green,
         )
         
         self.timer_label = tk.Label(
             master=self.time_frame,
             text=f'Time: ',
             font=("Helvetica", 12, 'bold'),
+            background=Color.green,
         )
 
         
@@ -44,7 +47,8 @@ class Test_Window:
         self.colon_label = tk.Label(
             master=self.time_frame, 
             text=":", 
-            font=("Helvetica", 16)
+            font=("Helvetica", 16),
+            background=Color.green,
         )
         
         self.entry_seconds = tk.Entry(
@@ -56,12 +60,14 @@ class Test_Window:
         
         self.mode_frame = tk.Frame(
             master=self.root,
+            background=Color.green,
         )
         
         self.mode_label = tk.Label(
             master=self.mode_frame,
             font=("Helvetica", 12, 'bold'),
             text='Mode:',
+            background=Color.green,
         )
         
         self.mode_entry = tk.Entry(
@@ -73,12 +79,14 @@ class Test_Window:
         
         self.name_frame = tk.Frame(
             master=self.root,
+            background=Color.green,
         )
         
         self.prompt_label = tk.Label(
             master=self.name_frame, 
             text="Name", 
-            font=("Helvetica", 12)
+            font=("Helvetica", 12),
+            background=Color.green,
         )
         
         self.name_entry = tk.Entry(
@@ -98,6 +106,7 @@ class Test_Window:
 
         self.test_frame = tk.Frame(
             master=self.root,
+            background=Color.green,
         )
         
         self.number_label = tk.Label(
@@ -106,6 +115,7 @@ class Test_Window:
             font=('Arial', 24),
             state='disabled',
             pady=60,
+            background=Color.green,
         )
         
         self.check_button = tk.Button(
@@ -127,7 +137,8 @@ class Test_Window:
             master=self.test_frame,
             text="", 
             font=("Arial", 16),
-            state='disabled'
+            state='disabled',
+            background=Color.green,
         )
 
         self.timer_label.pack(side='left')

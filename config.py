@@ -1,6 +1,6 @@
 class Number_prop:
     show_wait = 250 # ms
-    sleep_wait = 3000 # ms
+    sleep_wait = 3250 # ms
         
 class Time:
     countdown_time = 5 * 60 # seconds
@@ -29,4 +29,8 @@ key_headers = [
 
 class MonitorMode:
     run_mode = 'monitor'
-    
+
+class Color:
+    green = '#00FF00'
+    black = '#000000'
+
