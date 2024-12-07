@@ -277,7 +277,7 @@ class Test_Window:
         original_color = self.check_button.cget('bg')
         self.check_button.config(bg='yellow')
         self.check_button.after(100, lambda: self.check_button.config(bg=original_color))    
-        if (len(self.data) < self.n_mode + 1):
+        if self.data_index < self.n_mode + 1:
             self.message_label.config(text= 'lack of data for test n-back')
         else:
             index = len(self.data) - self.n_mode - 1
