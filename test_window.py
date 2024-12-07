@@ -173,10 +173,19 @@ class Test_Window:
         self.root.mainloop()
 
     def start_counting(self):
-        self.entry_seconds.pack_forget()
-        self.entry_minutes.pack_forget()
-        self.colon_label.pack_forget()
-        self.number_label.config(font=('Arial', 80))
+        for widget in self.name_frame.winfo_children():
+            widget.pack_forget()
+        for widget in self.mode_frame.winfo_children():
+            widget.pack_forget()
+        for widget in self.time_frame.winfo_children():
+            widget.pack_forget()
+        self.name_frame.pack_forget()
+        self.mode_frame.pack_forget()
+        self.time_frame.pack_forget()
+        self.number_label.config(font=('Arial', 90))
+        self.root.geometry('500x500')
+        self.test_frame.config(pady=80)
+        self.test_frame.place(relx=0.5, rely=0.5, anchor='center')
         self.timer_label.config(font=('Arial', 16))
         self.update_timer()
         self.start_show_number()
@@ -263,9 +272,10 @@ class Test_Window:
             self.countdown_time -= 1
             self.root.after(1000, self.update_timer)
         elif not self.force_quit:
-                self.result = check_all_n_back(self.name, self.data, self.catch, self.time_left, self.n_mode)
-                self.number_label.config(text='Thank You!')
-                self.number_label.after(800, self.close_Test_Window)
+            self.result = check_all_n_back(self.name, self.data, self.catch, self.time_left, self.n_mode)
+            self.number_label.config(font=('Arial', 24))
+            self.number_label.config(text='Thank You!')
+            self.number_label.after(800, self.close_Test_Window)
     
     def close_Test_Window(self):
         self.root.destroy()
