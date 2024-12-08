@@ -219,7 +219,7 @@ class Test_Window:
         self.test_frame.place(relx=0.5, rely=0.5, anchor='center')
         self.timer_label.config(font=('Arial', 16))
         self.data = self.generate_3back_sequence()
-        print(self.data)
+        # print(self.data)
         self.data_index = 0
         self.update_timer()
         self.start_show_number()
@@ -252,6 +252,7 @@ class Test_Window:
                 widget.config(state='normal')
             self.number_label.config(text='Ready?')
             self.countdown_time = self.m * 60 + self.s - 1
+            self.countdown_time = 13
             self.n_mode = int(self.mode_entry.get())
             self.time_left = self.countdown_time 
             self.number_label.after(1000, self.start_counting)
@@ -280,11 +281,11 @@ class Test_Window:
         if self.data_index < self.n_mode + 1:
             self.message_label.config(text= 'lack of data for test n-back')
         else:
-            index = len(self.data) - self.n_mode - 1
+            index = self.data_index - self.n_mode - 1
             if not self.new_number_lock:
                 self.new_number_lock = True
                 self.message_label.config(text=f'Check submitted!')
-                self.seq = self.data[index:]
+                self.seq = self.data[index:self.data_index]
                 self.elapsed_time = (self.d2 - self.d1).total_seconds()
                 self.latencies_at_time = self.time_left - self.countdown_time
                 self.catch.update({index: (
@@ -305,10 +306,10 @@ class Test_Window:
             self.countdown_time -= 1
             self.root.after(1000, self.update_timer)
         elif not self.force_quit:
-            self.result = check_all_n_back(self.name, self.data, self.catch, self.time_left, self.n_mode)
+            self.result = check_all_n_back(self.name, self.data[:self.data_index], self.catch, self.time_left, self.n_mode)
             self.number_label.config(font=('Arial', 24))
             self.number_label.config(text='Thank You!')
-            self.number_label.after(800, self.close_Test_Window)
+            self.number_label.after(1000, self.close_Test_Window)
     
     def close_Test_Window(self):
         self.root.destroy()
