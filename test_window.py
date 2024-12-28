@@ -1,9 +1,10 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from config import *
 from process import *
 import random
 from datetime import datetime
+import pygame
 
 class Test_Window:
     def __init__(self):
@@ -15,6 +16,7 @@ class Test_Window:
         self.data = list()
         self.latencies = list()
         self.catch = dict()
+        self.mp3_file = None
         self.__set_widgets()
     
     def __set_widgets(self):
@@ -79,6 +81,13 @@ class Test_Window:
         )
         self.mode_entry.insert(0, str(Mode.n_back_mode))
         self.mode_entry.config(state='readonly')
+        
+        self.upload_button = tk.Button(
+            master=self.root, 
+            font=("Helvetica", 12, 'bold'),
+            text="Condition file", 
+            command=self.upload_file,
+            width=18)
         
         self.name_frame = tk.Frame(
             master=self.root,
@@ -155,6 +164,8 @@ class Test_Window:
         self.mode_entry.pack(side='left')
         self.mode_frame.place(relx=0.2, rely=0.18, anchor='center')
         
+        self.upload_button.place(relx=0.2, rely=.24, anchor='center')
+        
         self.prompt_label.pack(fill='x', side='top')
         self.name_entry.pack(fill='x')
         self.submit_button.pack(pady=10) 
@@ -167,6 +178,29 @@ class Test_Window:
         
         self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
     
+    def upload_file(self):
+
+        self.mp3_file = filedialog.askopenfilename(
+        filetypes=[("MP3 Files", "*.mp3")], 
+        title="Choose an MP3 file"
+    )
+        if self.mp3_file:
+            messagebox.showinfo("File Selected", f"Selected: {self.mp3_file}")
+
+    def play_condition(self):
+        if self.mp3_file:
+            try:
+                pygame.mixer.music.load(self.mp3_file)
+                pygame.mixer.music.play()
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to play file:\n{e}")
+
+    def stop_condition(self):
+        try:
+            pygame.mixer.music.stop()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to stop music:\n{e}")
+
     def generate_3back_sequence(self):
         total_numbers = 92  # Total length of the sequence
         numbers_per_group = 18  # Numbers in each group
@@ -191,7 +225,7 @@ class Test_Window:
                     group_numbers.append(new_number)
             
             sequence.extend(group_numbers)
-        
+        print(sequence)
         return sequence
 
     
@@ -204,6 +238,8 @@ class Test_Window:
         self.root.mainloop()
 
     def start_counting(self):
+        pygame.mixer.init()
+        self.play_condition()
         for widget in self.name_frame.winfo_children():
             widget.pack_forget()
         for widget in self.mode_frame.winfo_children():
@@ -213,13 +249,13 @@ class Test_Window:
         self.name_frame.pack_forget()
         self.mode_frame.pack_forget()
         self.time_frame.pack_forget()
+        self.upload_button.place_forget()
         self.number_label.config(font=('Arial', 90))
         self.root.geometry('500x500')
         self.test_frame.config(pady=80)
         self.test_frame.place(relx=0.5, rely=0.5, anchor='center')
         self.timer_label.config(font=('Arial', 16))
         self.data = self.generate_3back_sequence()
-        # print(self.data)
         self.data_index = 0
         self.update_timer()
         self.start_show_number()
@@ -265,12 +301,13 @@ class Test_Window:
         return random_number
     
     def start_show_number(self):
-        random_number = self.generate_and_set()
-        self.number_label.config(text=str(random_number))
-        self.new_number_lock = False
-        self.d1 = datetime.now()
-        self.root.after(Number_prop.show_wait, lambda: self.number_label.config(text=''))
-        self.number_label.after(Number_prop.sleep_wait, self.start_show_number)
+        if self.countdown_time > 1:
+            random_number = self.generate_and_set()
+            self.number_label.config(text=str(random_number))
+            self.new_number_lock = False
+            self.d1 = datetime.now()
+            self.root.after(Number_prop.show_wait, lambda: self.number_label.config(text=''))
+            self.number_label.after(Number_prop.sleep_wait, self.start_show_number)
      
     
     def take_action(self, event):
@@ -306,6 +343,7 @@ class Test_Window:
             self.countdown_time -= 1
             self.root.after(1000, self.update_timer)
         elif not self.force_quit:
+            self.stop_condition()
             self.result = check_all_n_back(self.name, self.data[:self.data_index], self.catch, self.time_left, self.n_mode)
             self.number_label.config(font=('Arial', 24))
             self.number_label.config(text='Thank You!')
