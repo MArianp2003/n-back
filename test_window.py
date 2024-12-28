@@ -1,10 +1,11 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import messagebox, filedialog, ttk
 from config import *
 from process import *
 import random
 from datetime import datetime
 import pygame
+
 
 class Test_Window:
     def __init__(self):
@@ -17,6 +18,8 @@ class Test_Window:
         self.latencies = list()
         self.catch = dict()
         self.mp3_file = None
+        self.index_color = 0
+        self.color_list = [Color.green, Color.black]
         self.__set_widgets()
     
     def __set_widgets(self):
@@ -88,6 +91,27 @@ class Test_Window:
             text="Condition file", 
             command=self.upload_file,
             width=18)
+        
+        self.frequency_frame = tk.Frame(
+            master=self.root,
+            background=Color.green
+        )
+        
+        self.frequency_label = tk.Label(
+            master=self.frequency_frame, 
+            text="Select Frequency:", 
+            font=("Arial", 12, 'bold'),
+            background=Color.green,
+        )
+        
+        self.frequency_var = tk.StringVar(value="0")
+        self.frequency_dropdown = ttk.Combobox(
+            master=self.frequency_frame, 
+            textvariable=self.frequency_var, 
+            values=["0", "5", "40"], 
+            state="readonly",
+            width=4
+        )
         
         self.name_frame = tk.Frame(
             master=self.root,
@@ -162,10 +186,14 @@ class Test_Window:
         
         self.mode_label.pack(side='left')
         self.mode_entry.pack(side='left')
-        self.mode_frame.place(relx=0.2, rely=0.18, anchor='center')
+        self.mode_frame.place(relx=0.2, rely=0.19, anchor='center')
         
-        self.upload_button.place(relx=0.2, rely=.24, anchor='center')
+        self.frequency_label.pack(side='left')
+        self.frequency_dropdown.pack(side='left')
+        self.frequency_frame.place(relx=0.2, rely=0.25, anchor='center')
         
+        self.upload_button.place(relx=0.2, rely=0.31, anchor='center')
+
         self.prompt_label.pack(fill='x', side='top')
         self.name_entry.pack(fill='x')
         self.submit_button.pack(pady=10) 
@@ -228,7 +256,6 @@ class Test_Window:
         print(sequence)
         return sequence
 
-    
     def on_closing(self):
         if messagebox.askyesno(title='Exit?', message='Are you sure you want to quit?'):
             self.force_quit = True
@@ -238,17 +265,23 @@ class Test_Window:
         self.root.mainloop()
 
     def start_counting(self):
+        
         pygame.mixer.init()
         self.play_condition()
+        if self.frequency != 0:
+            self.start_blinking()
         for widget in self.name_frame.winfo_children():
             widget.pack_forget()
         for widget in self.mode_frame.winfo_children():
+            widget.pack_forget()
+        for widget in self.frequency_frame.winfo_children():
             widget.pack_forget()
         for widget in self.time_frame.winfo_children():
             widget.pack_forget()
         self.name_frame.pack_forget()
         self.mode_frame.pack_forget()
         self.time_frame.pack_forget()
+        self.frequency_frame.place_forget()
         self.upload_button.place_forget()
         self.number_label.config(font=('Arial', 90))
         self.root.geometry('500x500')
@@ -259,6 +292,31 @@ class Test_Window:
         self.data_index = 0
         self.update_timer()
         self.start_show_number()
+
+
+    def start_blinking(self):
+        self.interval = int(1000 / (2 * self.frequency))
+        self.blink(self.root)
+        self.blink(self.name_frame)
+        self.blink(self.mode_frame)
+        self.blink(self.time_frame)
+        # self.blink(self.test_frame)
+        self.blink(self.frequency_frame)
+        self.blink(self.upload_button)
+        
+    
+    def blink(self, widget, sec30=0):
+        current_color = widget.cget('bg')
+        sec30 += self.interval
+        if sec30 >= 30 * 1000:
+            widget.config(bg=Color.green)    
+            return
+        try:
+            next_color = self.color_list[1 - self.color_list.index(current_color)]
+        except:
+            next_color = Color.green
+        widget.config(bg=next_color)
+        widget.after(self.interval, lambda: self.blink(widget, sec30))
 
     def validate_time_entry(self):
         try:
@@ -280,6 +338,7 @@ class Test_Window:
             self.name = self.name_entry.get()
             self.m = int(self.entry_minutes.get())
             self.s = int(self.entry_seconds.get())
+            self.frequency = int(self.frequency_var.get())
             for widget in self.name_frame.winfo_children():
                 widget.config(state='disabled')
             for widget in self.mode_frame.winfo_children():
@@ -288,12 +347,11 @@ class Test_Window:
                 widget.config(state='normal')
             self.number_label.config(text='Ready?')
             self.countdown_time = self.m * 60 + self.s - 1
-            self.countdown_time = 13
+            # self.countdown_time = 13
             self.n_mode = int(self.mode_entry.get())
             self.time_left = self.countdown_time 
             self.number_label.after(1000, self.start_counting)
             self.root.bind('<space>', self.take_action)
-
     
     def generate_and_set(self):
         random_number = self.data[self.data_index]
@@ -309,7 +367,6 @@ class Test_Window:
             self.root.after(Number_prop.show_wait, lambda: self.number_label.config(text=''))
             self.number_label.after(Number_prop.sleep_wait, self.start_show_number)
      
-    
     def take_action(self, event):
         self.d2 = datetime.now()
         original_color = self.check_button.cget('bg')
