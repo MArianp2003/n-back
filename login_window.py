@@ -228,7 +228,7 @@ class Login_window:
             self.frequency = float(self.frequency_var.get())
             self.condition = int(self.condition_var.get())
             self.time_left = self.m * 60 + self.s - 1
-            self.time_left = 13
+            # self.time_left = 13
             self.countdown_time = 0
             self.n_mode = int(self.mode_entry.get())
             self.close_login_window()
