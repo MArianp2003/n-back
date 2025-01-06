@@ -4,7 +4,8 @@ class Number_prop:
         
 class Time:
     countdown_time = 5 * 60 # seconds
-    
+    black_screen = 10 * 60 * 1000 # 10 minutes
+    flicker_in_black = 30 * 1000 # 30 seconds
 class Mode:
     n_back_mode = 3
 
@@ -28,9 +29,9 @@ key_headers = [
 ]
 
 class MonitorMode:
-    run_mode = 'monitor'
+    run_mode = 'test'
 
 class Color:
     green = '#00FF00'
     black = '#000000'
-
+    white = '#FFFFFF'
