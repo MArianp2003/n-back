@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog, ttk
+from tkinter import messagebox
 from config import *
 from process import *
 import random
@@ -8,150 +8,51 @@ import pygame
 
 
 class Test_Window:
-    def __init__(self):
+    def __init__(self, name, frequency, condition, countdown_time, n_mode, time_left, mp3_file):
+        pygame.mixer.init()
+        self.name = name
+        self.frequency = frequency
+        self.condition = condition
+        self.countdown_time = countdown_time
+        self.n_mode = n_mode
+        self.time_left = time_left
         self.force_quit = False
+        self.mp3_file = mp3_file
+                
         self.new_number_lock = False
-        self.countdown_time = Time.countdown_time
-        self.n_mode = Mode.n_back_mode
         self.latencies_at_time = list()
         self.data = list()
         self.latencies = list()
         self.catch = dict()
-        self.mp3_file = None
         self.index_color = 0
         self.color_list = [Color.green, Color.black]
-        self.__set_widgets()
-    
-    def __set_widgets(self):
+        self.color_list_label = [Color.white, Color.black]
         
+        
+        self.__set_widgets_on_condition(self.condition)
+        
+    def __set_widgets_on_condition(self, condition):
         self.root = tk.Tk()
-        self.root.title('N-Back Visual Program')
+        self.root.title('Test Program')
         self.root.geometry('600x600')
         self.root.configure(background=Color.green)
-        
-        self.time_frame = tk.Frame(
-            master=self.root,
-            background=Color.green,
-        )
-        
-        self.timer_label = tk.Label(
-            master=self.time_frame,
-            text=f'Time: ',
-            font=("Helvetica", 12, 'bold'),
-            background=Color.green,
-        )
-
-        
-        self.entry_minutes = tk.Entry(
-            master=self.time_frame,
-            width=5,
-            font=("Helvetica", 16),
-        )
-        self.entry_minutes.insert(0, '5')
-        self.entry_minutes.config(state='readonly')
-        
-        self.colon_label = tk.Label(
-            master=self.time_frame, 
-            text=":", 
-            font=("Helvetica", 16),
-            background=Color.green,
-        )
-        
-        self.entry_seconds = tk.Entry(
-            master=self.time_frame,
-            width=5,
-            font=("Helvetica", 16),
-        )
-        self.entry_seconds.insert(0, '00')
-        self.entry_seconds.config(state='readonly')
-        
-        self.mode_frame = tk.Frame(
-            master=self.root,
-            background=Color.green,
-        )
-        
-        self.mode_label = tk.Label(
-            master=self.mode_frame,
-            font=("Helvetica", 12, 'bold'),
-            text='Mode:',
-            background=Color.green,
-        )
-        
-        self.mode_entry = tk.Entry(
-            master=self.mode_frame,
-            width=11,
-            font=("Helvetica", 16),
-        )
-        self.mode_entry.insert(0, str(Mode.n_back_mode))
-        self.mode_entry.config(state='readonly')
-        
-        self.upload_button = tk.Button(
-            master=self.root, 
-            font=("Helvetica", 12, 'bold'),
-            text="Condition file", 
-            command=self.upload_file,
-            width=18)
-        
-        self.frequency_frame = tk.Frame(
-            master=self.root,
-            background=Color.green
-        )
-        
-        self.frequency_label = tk.Label(
-            master=self.frequency_frame, 
-            text="Select Frequency:", 
-            font=("Arial", 12, 'bold'),
-            background=Color.green,
-        )
-        
-        self.frequency_var = tk.StringVar(value="0")
-        self.frequency_dropdown = ttk.Combobox(
-            master=self.frequency_frame, 
-            textvariable=self.frequency_var, 
-            values=["0", "5", "40"], 
-            state="readonly",
-            width=4
-        )
-        
-        self.name_frame = tk.Frame(
-            master=self.root,
-            background=Color.green,
-        )
-        
-        self.prompt_label = tk.Label(
-            master=self.name_frame, 
-            text="Name", 
-            font=("Helvetica", 12),
-            background=Color.green,
-        )
-        
-        self.name_entry = tk.Entry(
-            master=self.name_frame, 
-            font=("Helvetica", 12), 
-            width=22
-        )
-
-        self.submit_button = tk.Button(
-            master=self.name_frame, 
-            text="Submit", 
-            font=("Helvetica", 12), 
-            command=self.login,
-            width=25,
-            bg='#71F5BC'
-        )
+        self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
+        self.root.bind('<space>', self.take_action)
 
         self.test_frame = tk.Frame(
             master=self.root,
             background=Color.green,
+            pady=30,
+            padx=15,
         )
         
         self.number_label = tk.Label(
             master=self.test_frame, 
-            text="Waiting to submit",
-            font=('Arial', 24),
-            state='disabled',
+            text="Ready?",
+            font=('Arial', 110),
             pady=60,
             background=Color.green,
+            foreground=Color.black
         )
         
         self.check_button = tk.Button(
@@ -165,70 +66,75 @@ class Test_Window:
             borderwidth=4,
             activebackground='yellow',
             activeforeground='black',
-            command=self.Click_Button,
-            state='disabled'
+            command=self.click_button,
         )
         
         self.message_label = tk.Label(
             master=self.test_frame,
             text="", 
             font=("Arial", 16),
-            state='disabled',
             background=Color.green,
         )
 
-        self.timer_label.pack(side='left')
-        self.prompt_label.pack(side="left")
-        self.entry_minutes.pack(side='left')
-        self.colon_label.pack(side='left')
-        self.entry_seconds.pack(side='left')
-        self.time_frame.place(relx=0.2, rely=0.13, anchor='center')
+        match condition:
+            case 1 | 2:
+                self.__start_task()
+            case 3:
+                self.interval = int(1000 / (2 * self.frequency))
+                self.root.configure(background=Color.black)
+                self.play_condition()
+                self.root.after(Time.black_screen - Time.flicker_in_black, lambda: self.flicker_30sec(self.root))
+                self.root.after(Time.black_screen, self.start_condition_3)
+                
+    def start_condition_3(self):
+        self.stop_condition()
+        self.__start_task()
         
-        self.mode_label.pack(side='left')
-        self.mode_entry.pack(side='left')
-        self.mode_frame.place(relx=0.2, rely=0.19, anchor='center')
-        
-        self.frequency_label.pack(side='left')
-        self.frequency_dropdown.pack(side='left')
-        self.frequency_frame.place(relx=0.2, rely=0.25, anchor='center')
-        
-        self.upload_button.place(relx=0.2, rely=0.31, anchor='center')
-
-        self.prompt_label.pack(fill='x', side='top')
-        self.name_entry.pack(fill='x')
-        self.submit_button.pack(pady=10) 
-        self.name_frame.place(relx=0.7, rely=0.15, anchor='center')
-        
+    def __start_task(self):
         self.number_label.pack(side='top')
         self.check_button.pack()
         self.message_label.pack()
         self.test_frame.place(relx=0.5, rely=0.6, anchor='center')
-        
-        self.root.protocol('WM_DELETE_WINDOW', self.on_closing)
+        self.number_label.after(1000, self.start_counting)
+
+
     
-    def upload_file(self):
+    def start_counting(self):
+        if self.condition == 2:
+            self.interval = int(1000 / (2 * self.frequency))
+            self.flicker(self.root)
+            self.flicker(self.number_label)
+        self.check_button.config(state='normal')
+        self.data = self.generate_3back_sequence()
+        self.data_index = 0
+        self.update_timer()
+        self.start_show_number()
 
-        self.mp3_file = filedialog.askopenfilename(
-        filetypes=[("MP3 Files", "*.mp3")], 
-        title="Choose an MP3 file"
-    )
-        if self.mp3_file:
-            messagebox.showinfo("File Selected", f"Selected: {self.mp3_file}")
+    def update_timer(self):
+        if self.countdown_time < self.time_left:
+            self.countdown_time += 1
+            self.root.after(1000, self.update_timer)
+        elif not self.force_quit:
+            # self.stop_condition()
+            self.result = check_all_n_back(self.name, self.data[:self.data_index], self.catch, self.time_left, self.n_mode)
+            self.number_label.config(font=('Arial', 45))
+            self.number_label.config(text='Thank You!')
+            self.number_label.after(1000, self.close_Test_Window)
 
-    def play_condition(self):
-        if self.mp3_file:
-            try:
-                pygame.mixer.music.load(self.mp3_file)
-                pygame.mixer.music.play()
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to play file:\n{e}")
+    def start_show_number(self):
+        if self.countdown_time < self.time_left - 1:
+            random_number = self.generate_and_set()
+            self.number_label.config(text=str(random_number))
+            self.new_number_lock = False
+            self.d1 = datetime.now()
+            self.root.after(Number_prop.show_wait, lambda: self.number_label.config(text=''))
+            self.number_label.after(Number_prop.sleep_wait, self.start_show_number)
 
-    def stop_condition(self):
-        try:
-            pygame.mixer.music.stop()
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to stop music:\n{e}")
-
+    def generate_and_set(self):
+        random_number = self.data[self.data_index]
+        self.data_index += 1
+        return random_number
+    
     def generate_3back_sequence(self):
         total_numbers = 92  # Total length of the sequence
         numbers_per_group = 18  # Numbers in each group
@@ -255,118 +161,12 @@ class Test_Window:
             sequence.extend(group_numbers)
         print(sequence)
         return sequence
-
+    
     def on_closing(self):
         if messagebox.askyesno(title='Exit?', message='Are you sure you want to quit?'):
             self.force_quit = True
             self.close_Test_Window()
     
-    def run(self):
-        self.root.mainloop()
-
-    def start_counting(self):
-        
-        pygame.mixer.init()
-        self.play_condition()
-        if self.frequency != 0:
-            self.start_blinking()
-        for widget in self.name_frame.winfo_children():
-            widget.pack_forget()
-        for widget in self.mode_frame.winfo_children():
-            widget.pack_forget()
-        for widget in self.frequency_frame.winfo_children():
-            widget.pack_forget()
-        for widget in self.time_frame.winfo_children():
-            widget.pack_forget()
-        self.name_frame.pack_forget()
-        self.mode_frame.pack_forget()
-        self.time_frame.pack_forget()
-        self.frequency_frame.place_forget()
-        self.upload_button.place_forget()
-        self.number_label.config(font=('Arial', 90))
-        self.root.geometry('500x500')
-        self.test_frame.config(pady=80)
-        self.test_frame.place(relx=0.5, rely=0.5, anchor='center')
-        self.timer_label.config(font=('Arial', 16))
-        self.data = self.generate_3back_sequence()
-        self.data_index = 0
-        self.update_timer()
-        self.start_show_number()
-
-
-    def start_blinking(self):
-        self.interval = int(1000 / (2 * self.frequency))
-        self.blink(self.root)
-        self.blink(self.name_frame)
-        self.blink(self.mode_frame)
-        self.blink(self.time_frame)
-        # self.blink(self.test_frame)
-        self.blink(self.frequency_frame)
-        self.blink(self.upload_button)
-        
-    
-    def blink(self, widget, sec30=0):
-        current_color = widget.cget('bg')
-        sec30 += self.interval
-        if sec30 >= 30 * 1000:
-            widget.config(bg=Color.green)    
-            return
-        try:
-            next_color = self.color_list[1 - self.color_list.index(current_color)]
-        except:
-            next_color = Color.green
-        widget.config(bg=next_color)
-        widget.after(self.interval, lambda: self.blink(widget, sec30))
-
-    def validate_time_entry(self):
-        try:
-            m = int(self.entry_minutes.get())
-            s = int(self.entry_seconds.get())
-        except:
-            return False
-        
-        if m >= 0 and 0 <= s < 60 and m * 60 + s > 0:
-            return True
-        
-        return False
-        
-    def login(self):
-        if not self.name_entry.get() or not self.validate_time_entry():
-            messagebox.showerror('ERROR!', message='Invalid name or time, check the inputs and try again.')
-            
-        else:
-            self.name = self.name_entry.get()
-            self.m = int(self.entry_minutes.get())
-            self.s = int(self.entry_seconds.get())
-            self.frequency = int(self.frequency_var.get())
-            for widget in self.name_frame.winfo_children():
-                widget.config(state='disabled')
-            for widget in self.mode_frame.winfo_children():
-                widget.config(state='disabled')
-            for widget in self.test_frame.winfo_children():
-                widget.config(state='normal')
-            self.number_label.config(text='Ready?')
-            self.countdown_time = self.m * 60 + self.s - 1
-            # self.countdown_time = 13
-            self.n_mode = int(self.mode_entry.get())
-            self.time_left = self.countdown_time 
-            self.number_label.after(1000, self.start_counting)
-            self.root.bind('<space>', self.take_action)
-    
-    def generate_and_set(self):
-        random_number = self.data[self.data_index]
-        self.data_index += 1
-        return random_number
-    
-    def start_show_number(self):
-        if self.countdown_time > 1:
-            random_number = self.generate_and_set()
-            self.number_label.config(text=str(random_number))
-            self.new_number_lock = False
-            self.d1 = datetime.now()
-            self.root.after(Number_prop.show_wait, lambda: self.number_label.config(text=''))
-            self.number_label.after(Number_prop.sleep_wait, self.start_show_number)
-     
     def take_action(self, event):
         self.d2 = datetime.now()
         original_color = self.check_button.cget('bg')
@@ -381,38 +181,68 @@ class Test_Window:
                 self.message_label.config(text=f'Check submitted!')
                 self.seq = self.data[index:self.data_index]
                 self.elapsed_time = (self.d2 - self.d1).total_seconds()
-                self.latencies_at_time = self.time_left - self.countdown_time
+                self.latencies_at_time = self.countdown_time
                 self.catch.update({index: (
                     self.seq, 
                     f'{self.latencies_at_time // 60:02}:{self.latencies_at_time % 60:02}',
                     round(self.elapsed_time, DigitRound.digit_round)    
                 )})
         self.message_label.after(1000, lambda: self.message_label.config(text=''))
-            
-    def Click_Button(self):
-        self.take_action(event=None)
         
-    def update_timer(self):
-        minutes = self.countdown_time // 60
-        seconds = self.countdown_time % 60
-        self.timer_label.config(text=f"Time left: {minutes:02}:{seconds:02}")
-        if self.countdown_time > 0:
-            self.countdown_time -= 1
-            self.root.after(1000, self.update_timer)
-        elif not self.force_quit:
-            self.stop_condition()
-            self.result = check_all_n_back(self.name, self.data[:self.data_index], self.catch, self.time_left, self.n_mode)
-            self.number_label.config(font=('Arial', 24))
-            self.number_label.config(text='Thank You!')
-            self.number_label.after(1000, self.close_Test_Window)
+
+    def flicker(self, widget):
+    
+        if isinstance(widget, tk.Tk):
+            if self.countdown_time >= self.time_left:
+                widget.config(bg=Color.green)
+                return            
+            current_color = widget.cget('bg')
+            next_color = self.color_list[1 - self.color_list.index(current_color)]
+            widget.config(bg=next_color)
+            
+        elif isinstance(widget, tk.Label):
+            if self.countdown_time >= self.time_left:
+                widget.config(fg=Color.black)
+                return
+            current_color = widget.cget('fg')
+            next_color = self.color_list_label[1 - self.color_list_label.index(current_color)]
+            widget.config(fg=next_color)
+            
+        widget.after(self.interval, lambda: self.flicker(widget))
+
+    def flicker_30sec(self, widget, sec=0):
+        if sec >= Time.flicker_in_black:
+            widget.configure(background=Color.green)
+            return
+        current_color = widget.cget('bg')
+        next_color = self.color_list[1 - self.color_list.index(current_color)]
+        widget.config(bg=next_color)
+        widget.after(self.interval, lambda: self.flicker_30sec(widget, sec + self.interval))
+            
+    def play_condition(self):
+        if self.mp3_file:
+            try:
+                pygame.mixer.music.load(self.mp3_file)
+                pygame.mixer.music.play()
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to play file:\n{e}")
+
+    def stop_condition(self):
+        try:
+            pygame.mixer.music.stop()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to stop music:\n{e}")
+
+    def click_button(self):
+        self.take_action(event=None)
+
+    def run(self):
+        self.root.mainloop()
     
     def close_Test_Window(self):
         self.root.destroy()
-
-def main():
-    t = Test_Window()
-    t.run()
+    
 
 if __name__ == '__main__':
-    main()
-    
+    test = Test_Window()
+    test.run()
