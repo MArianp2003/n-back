@@ -5,8 +5,6 @@ import json
 class Monitor_Window:
     
     def __init__(self):
-        with open('database.json', 'r') as json_file:
-            self.raw_data = json.load(json_file)
         self.__set_widgets()
         
     def __set_widgets(self):
@@ -32,49 +30,49 @@ class Monitor_Window:
             font=('Arial', 14), 
         )
 
-        # Row 1: correct
-        self.correct_label = tk.Label(
+        # Row 1: hit
+        self.hit_label = tk.Label(
             master=self.frame, 
-            text='Correct:', 
+            text='Hit:', 
             font=('Arial', 14, 'bold')
         )
-        self.correct_entry = tk.Entry(
+        self.hit_entry = tk.Entry(
             master=self.frame, 
             font=('Arial', 14),
             state='readonly'
         )
 
-        # Row 2: incorrect
-        self.incorrect_label = tk.Label(
+        # Row 2: false_alarm
+        self.false_alarm_label = tk.Label(
             master=self.frame, 
-            text='Incorrect:', 
+            text='false_alarm:', 
             font=('Arial', 14, 'bold')
         )
-        self.incorrect_entry = tk.Entry(
+        self.false_alarm_entry = tk.Entry(
             self.frame, 
             font=('Arial', 14), 
             state='readonly'
         )
 
-        # Row 3: uncatched
-        self.uncatched_label = tk.Label(
+        # Row 3: miss
+        self.miss_label = tk.Label(
             self.frame, 
-            text='Uncatched:', 
+            text='miss:', 
             font=('Arial', 14, 'bold')
         )
-        self.uncatched_entry = tk.Entry(
+        self.miss_entry = tk.Entry(
             master=self.frame, 
             font=('Arial', 14), 
             state='readonly'
         )
 
-        # Row 4: other
-        self.other_label = tk.Label(
+        # Row 4: correct_rejection
+        self.correct_rejection_label = tk.Label(
             master=self.frame, 
-            text='Other:', 
+            text='correct_rejection:', 
             font=('Arial', 14, 'bold')
         )
-        self.other_entry = tk.Entry(
+        self.correct_rejection_entry = tk.Entry(
             master=self.frame, 
             font=('Arial', 14), 
             state='readonly'
@@ -140,14 +138,14 @@ class Monitor_Window:
 
         self.name_label.grid(row=0, column=0, sticky='e')
         self.name_entry.grid(row=0, column=1, padx=10)
-        self.correct_label.grid(row=1, column=0, sticky='e')
-        self.correct_entry.grid(row=1, column=1, padx=10)
-        self.incorrect_label.grid(row=2, column=0, sticky='e')
-        self.incorrect_entry.grid(row=2, column=1, padx=10)
-        self.uncatched_label.grid(row=3, column=0, sticky='e')
-        self.uncatched_entry.grid(row=3, column=1, padx=10)
-        self.other_label.grid(row=4, column=0, sticky='e')
-        self.other_entry.grid(row=4, column=1, padx=10)
+        self.hit_label.grid(row=1, column=0, sticky='e')
+        self.hit_entry.grid(row=1, column=1, padx=10)
+        self.false_alarm_label.grid(row=2, column=0, sticky='e')
+        self.false_alarm_entry.grid(row=2, column=1, padx=10)
+        self.miss_label.grid(row=3, column=0, sticky='e')
+        self.miss_entry.grid(row=3, column=1, padx=10)
+        self.correct_rejection_label.grid(row=4, column=0, sticky='e')
+        self.correct_rejection_entry.grid(row=4, column=1, padx=10)
         self.at_times_label.grid(row=5, column=0, sticky='e')
         self.at_times_entry.grid(row=5, column=1, padx=10)
         self.latencies_label.grid(row=6, column=0, sticky='e')
@@ -168,6 +166,8 @@ class Monitor_Window:
         widget.config(state='readonly')
         
     def search_key(self, event):
+        with open('database.json', 'r') as json_file:
+            self.raw_data = json.load(json_file)
         self.search()
         
     def search(self):
@@ -177,13 +177,13 @@ class Monitor_Window:
                 break
             if self.name_entry.get() == item.get('name'):
                 not_found = False
-                self.set_and_set(self.correct_entry, item.get('correct'))
-                self.set_and_set(self.incorrect_entry, item.get('incorrect'))
-                self.set_and_set(self.uncatched_entry, item.get('uncatched'))
-                self.set_and_set(self.other_entry, item.get('other'))
+                self.set_and_set(self.hit_entry, item.get('hit'))
+                self.set_and_set(self.false_alarm_entry, item.get('false_alarm'))
+                self.set_and_set(self.miss_entry, item.get('miss'))
+                self.set_and_set(self.correct_rejection_entry, item.get('correct_rejection'))
                 all_times = list()
                 all_latencies = list()
-                for value in item.get('correct_catched').values():
+                for value in item.get('hit_catched').values():
                     seq, time, latency = value
                     all_times.append(time)
                     all_latencies.append(str(latency))
@@ -213,10 +213,10 @@ class Monitor_Window:
     def set_width_all_entries(self, l):
         l = max(10, l)
         self.name_entry.config(width=l)
-        self.correct_entry.config(width=l)
-        self.incorrect_entry.config(width=l)
-        self.uncatched_entry.config(width=l)
-        self.other_entry.config(width=l)
+        self.hit_entry.config(width=l)
+        self.false_alarm_entry.config(width=l)
+        self.miss_entry.config(width=l)
+        self.correct_rejection_entry.config(width=l)
         self.at_times_entry.config(width=l)
         self.latencies_entry.config(width=l)
         self.time_duration_entry.config(width=l)

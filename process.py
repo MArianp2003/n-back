@@ -16,10 +16,10 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n
         if seq[0] == seq[-1]:
             n_back_is_correct.update({key: value})
     
-    correct = len(n_back_is_correct)
-    incorrect = len(catched) - len(n_back_is_correct)
-    uncatched = len(happen_n_back) - len(n_back_is_correct)
-    other = len(data) - n_mode - len(happen_n_back)
+    hit = len(n_back_is_correct)
+    false_alarm = len(catched) - len(n_back_is_correct)
+    miss = len(happen_n_back) - len(n_back_is_correct)
+    correct_rejection = len(data) - n_mode - len(happen_n_back)
     
     print(data)
     print(json.dumps(catched, indent=4))
@@ -28,11 +28,11 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n
     result = {
         'name': name,
         'data': ', '.join(map(str, data)),
-        'correct': correct,
-        'incorrect': incorrect, 
-        'uncatched': uncatched, 
-        'other': other,
-        'correct_catched': n_back_is_correct,
+        'hit': hit,
+        'false_alarm': false_alarm, 
+        'miss': miss, 
+        'correct_rejection': correct_rejection,
+        'hit_catched': n_back_is_correct,
         'time_duration': f'{time_duration // 60:02}:{time_duration % 60:02}',
         'mode': n_mode,
     }

@@ -19,11 +19,11 @@ class DataBase:
 key_headers = [
     'name',
     'data',
-    'correct',
-    'incorrect', 
-    'uncatched', 
-    'other',
-    'correct_catched',
+    'hit',
+    'false_alarm', 
+    'miss', 
+    'correct_rejection',
+    'hit_catched',
     'time_duration',
     'mode',
 ]
