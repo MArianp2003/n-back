@@ -7,7 +7,7 @@ if __name__ == '__main__':
 
     match MonitorMode.run_mode:
         case 'test':
-        #login window opens
+            #login window opens
             lw = Login_window()
             lw.run()
     

@@ -4,7 +4,17 @@ from config import *
 from process import *
 import random
 from datetime import datetime
-import pygame
+import subprocess
+import sys
+
+try:
+    import pygame
+except ImportError:
+    print("pygame not found. Installing...")
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pygame'])
+    import pygame  # Import again after installation
+    print("pygame installed successfully.")
+
 
 
 class Test_Window:
