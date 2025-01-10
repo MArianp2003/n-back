@@ -124,6 +124,31 @@ class Login_window:
             width=4
         )
         
+        self.debug_mode_frame = tk.Frame(
+            master=self.root,
+            background=Color.green,
+            padx=10,
+        )
+
+        
+        self.debug_mode_label = tk.Label(
+            master=self.debug_mode_frame, 
+            text="Debug Mode:", 
+            font=("Arial", 12, 'bold'),
+            background=Color.green,
+        )
+        
+        self.debug_mode_var = tk.StringVar(value="OFF")
+        
+        self.debug_mode_dropdown = ttk.Combobox(
+            master=self.debug_mode_frame, 
+            textvariable=self.debug_mode_var, 
+            values=["OFF", "ON"], 
+            state="readonly",
+            width=4
+        )
+
+        
         self.name_frame = tk.Frame(
             master=self.root,
             background=Color.green,
@@ -169,7 +194,10 @@ class Login_window:
         self.condition_label.pack(side='left')
         self.condition_dropdown.pack(side='left')
         self.condition_frame.place(relx=0.2, rely=0.6, anchor='center')
-
+        
+        self.debug_mode_label.pack(side='left')
+        self.debug_mode_dropdown.pack(side='left')
+        self.debug_mode_frame.place(relx=0.2, rely=0.75, anchor='center')
         
         self.name_label.pack(side='top')
         self.name_entry.pack()
@@ -227,8 +255,10 @@ class Login_window:
             self.s = int(self.entry_seconds.get())
             self.frequency = float(self.frequency_var.get())
             self.condition = int(self.condition_var.get())
+            self.debug = self.debug_mode_var.get()
             self.time_left = self.m * 60 + self.s - 1
-            # self.time_left = 13
+            if self.debug == 'ON':
+                self.time_left = 13
             self.countdown_time = 0
             self.n_mode = int(self.mode_entry.get())
             self.close_login_window()

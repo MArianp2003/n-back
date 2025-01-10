@@ -13,7 +13,7 @@ if __name__ == '__main__':
     
             if not lw.mquit:
                 #after login window gets the data and starts the task
-                tw = Test_Window(lw.name, lw.frequency, lw.condition, lw.countdown_time, lw.n_mode, lw.time_left, lw.mp3_file)
+                tw = Test_Window(lw.name, lw.frequency, lw.condition, lw.countdown_time, lw.n_mode, lw.time_left, lw.mp3_file, lw.debug)
                 tw.run()
 
         case 'monitor':

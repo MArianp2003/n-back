@@ -8,7 +8,7 @@ import pygame
 
 
 class Test_Window:
-    def __init__(self, name, frequency, condition, countdown_time, n_mode, time_left, mp3_file):
+    def __init__(self, name, frequency, condition, countdown_time, n_mode, time_left, mp3_file, debug):
         pygame.mixer.init()
         self.name = name
         self.frequency = frequency
@@ -18,6 +18,7 @@ class Test_Window:
         self.time_left = time_left
         self.force_quit = False
         self.mp3_file = mp3_file
+        self.debug = debug
                 
         self.new_number_lock = False
         self.latencies_at_time = list()
@@ -87,8 +88,12 @@ class Test_Window:
                 self.interval = int(1000 / (2 * self.frequency))
                 self.root.configure(background=Color.black)
                 self.play_condition()
-                self.root.after(Time.black_screen - Time.flicker_in_black, lambda: self.flicker_30sec(self.root)) # 9 min and 30 seconds black
-                self.root.after(Time.black_screen, self.start_condition_3)
+                if self.debug == 'ON':
+                    self.root.after(2 * 1000, lambda: self.flicker_30sec(self.root)) # 2 last seconds flicker and 4 seconds black screen in debug mode 
+                    self.root.after(4 * 1000, self.start_condition_3)
+                elif self.debug == 'OFF':
+                    self.root.after(Time.black_screen - Time.flicker_in_black, lambda: self.flicker_30sec(self.root)) # 9 min and 30 seconds black
+                    self.root.after(Time.black_screen, self.start_condition_3)
                 
                 
     def start_condition_3(self):
@@ -127,7 +132,7 @@ class Test_Window:
             self.countdown_time += 1
             self.root.after(1000, self.update_timer)
         elif not self.force_quit:
-            if self.condition == 2:
+            if self.condition in [2, 4]:
                 self.stop_condition()
             self.result = check_all_n_back(self.name, self.data[:self.data_index], self.catch, self.time_left, self.n_mode)
             self.number_label.config(font=('Arial', 100))
@@ -252,13 +257,23 @@ class Test_Window:
         widget.after(self.interval, lambda: self.flicker(widget))
 
     def flicker_30sec(self, widget, sec=0):
-        if sec >= Time.flicker_in_black:
-            widget.configure(background=Color.green)
-            return
-        current_color = widget.cget('bg')
-        next_color = self.color_list[1 - self.color_list.index(current_color)]
-        widget.config(bg=next_color)
-        widget.after(self.interval, lambda: self.flicker_30sec(widget, sec + self.interval))
+        if self.debug == 'ON':
+            if sec >= 2 * 1000:
+                widget.configure(background=Color.green)
+                return
+            current_color = widget.cget('bg')
+            next_color = self.color_list[1 - self.color_list.index(current_color)]
+            widget.config(bg=next_color)
+            widget.after(self.interval, lambda: self.flicker_30sec(widget, sec + self.interval))
+
+        elif self.debug == 'OFF':
+            if sec >= Time.flicker_in_black:
+                widget.configure(background=Color.green)
+                return
+            current_color = widget.cget('bg')
+            next_color = self.color_list[1 - self.color_list.index(current_color)]
+            widget.config(bg=next_color)
+            widget.after(self.interval, lambda: self.flicker_30sec(widget, sec + self.interval))
             
     def play_condition(self):
         if self.mp3_file:
