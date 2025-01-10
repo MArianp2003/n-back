@@ -18,4 +18,5 @@ if __name__ == '__main__':
 
         case 'monitor':
             m = Monitor_Window()
-            m.run()
+            if m.file_exist:
+                m.run()

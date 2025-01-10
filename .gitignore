@@ -3,3 +3,5 @@ build/
 dist/
 *.spec
 database.*
+init_database.py
+clear_database.py

@@ -1,11 +1,20 @@
 import tkinter as tk
 from tkinter import messagebox
+from config import *
 import json
+import os
+
 
 class Monitor_Window:
     
     def __init__(self):
-        self.__set_widgets()
+        self.file_exist = os.path.exists(DataBase.json_file) 
+        if not self.file_exist:
+            messagebox.showinfo(title='NO DATABASE FILE', message="There is no database json file in this directory, after this info, window will be close.")
+        else:
+            with open(DataBase.json_file, 'r') as json_file:
+                self.raw_data = json.load(json_file)
+            self.__set_widgets()
         
     def __set_widgets(self):
         
@@ -166,8 +175,6 @@ class Monitor_Window:
         widget.config(state='readonly')
         
     def search_key(self, event):
-        with open('database.json', 'r') as json_file:
-            self.raw_data = json.load(json_file)
         self.search()
         
     def search(self):
@@ -223,9 +230,7 @@ class Monitor_Window:
         self.mode_entry.config(width=l)
         
 
-def main():
-    t = Monitor_Window()
-    t.run()
-
 if __name__ == '__main__':
-    main()
+    m = Monitor_Window()
+    if m.file_exist:
+        m.run()

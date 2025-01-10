@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 from config import *
-
+import json
+import csv
+import os
 
 class Login_window:
     def __init__(self):
@@ -246,9 +248,12 @@ class Login_window:
         elif int(self.condition_var.get()) == 1 and float(self.frequency_var.get()) != 0:
             messagebox.showerror('ERROR!', message='Condition type is 1, so frequency of flicker should be 0, please try again.')            
         elif int(self.condition_var.get()) == 2 and float(self.frequency_var.get()) == 0:
-            messagebox.showerror('ERROR!', message='Condition type is 2 so frequency of flicker should be 5 or 40, please select one and try again.')
+            messagebox.showerror('ERROR!', message='Condition type is 2 so frequency of flicker should be 6.5 or 30, please select one and try again.')
         elif int(self.condition_var.get()) == 3 and float(self.frequency_var.get()) == 0:
-            messagebox.showerror('ERROR!', message='Condition type is 3 so frequency of flicker should be 5 or 40 and binaural beats file must not be empty, please select one and try again.')            
+            messagebox.showerror('ERROR!', message='Condition type is 3 so frequency of flicker should be 6.5 or 30 and binaural beats file must not be empty, please select one and try again.')            
+        elif int(self.condition_var.get()) == 4 and (float(self.frequency_var.get()) == 0 or not self.mp3_file):
+            messagebox.showerror('ERROR!', message='Condition type is 4 so frequency of flicker should be 6.5 or 30 and binaural beats file must not be empty, please select one and try again.')            
+    
         else:
             self.name = self.name_entry.get()
             self.m = int(self.entry_minutes.get())
@@ -261,6 +266,24 @@ class Login_window:
                 self.time_left = 13
             self.countdown_time = 0
             self.n_mode = int(self.mode_entry.get())
+            
+            current_directory = os.path.dirname(os.path.abspath(__file__))
+            
+            file_path = os.path.join(current_directory, DataBase.json_file)
+            if not os.path.exists(file_path):
+                print('json database file doesn\'t exist, creating...')
+                with open(DataBase.json_file, 'w') as json_file:
+                    json_file.write(json.dumps([], indent=4))
+                print('json database file created successfully.')
+            
+            file_path = os.path.join(current_directory, DataBase.csv_file)
+            if not os.path.exists(file_path):
+                print('csv database file doesn\'t exist, creating...')
+                with open(DataBase.csv_file, 'w') as csv_file:
+                    writer = csv.DictWriter(csv_file, fieldnames=key_headers)
+                    writer.writeheader()
+                print('csv database file created successfully.')
+            
             self.close_login_window()
             
 if __name__ == '__main__':
