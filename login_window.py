@@ -119,7 +119,7 @@ class Login_window:
         self.condition_dropdown = ttk.Combobox(
             master=self.condition_frame, 
             textvariable=self.condition_var, 
-            values=["1", "2", "3"], 
+            values=["1", "2", "3", "4"], 
             state="readonly",
             width=4
         )
@@ -219,7 +219,7 @@ class Login_window:
             messagebox.showerror('ERROR!', message='Condition type is 1, so frequency of flicker should be 0, please try again.')            
         elif int(self.condition_var.get()) == 2 and float(self.frequency_var.get()) == 0:
             messagebox.showerror('ERROR!', message='Condition type is 2 so frequency of flicker should be 5 or 40, please select one and try again.')
-        elif int(self.condition_var.get()) == 3 and (float(self.frequency_var.get()) == 0 or not self.mp3_file):
+        elif int(self.condition_var.get()) == 3 and float(self.frequency_var.get()) == 0:
             messagebox.showerror('ERROR!', message='Condition type is 3 so frequency of flicker should be 5 or 40 and binaural beats file must not be empty, please select one and try again.')            
         else:
             self.name = self.name_entry.get()

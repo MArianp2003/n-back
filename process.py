@@ -9,12 +9,15 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n
         sliced = data[i: i + n_mode + 1]
         if sliced[0] == sliced[-1]:
             happen_n_back.update({i: sliced})
-    
+    all_latencies = list()
+    all_times_checked = list()
     n_back_is_correct = dict()
     for key, value in catched.items():
         seq, time, latency = value
         if seq[0] == seq[-1]:
             n_back_is_correct.update({key: value})
+            all_latencies.append(latency)
+            all_times_checked.append(time)
     
     hit = len(n_back_is_correct)
     false_alarm = len(catched) - len(n_back_is_correct)
@@ -35,6 +38,8 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n
         'hit_catched': n_back_is_correct,
         'time_duration': f'{time_duration // 60:02}:{time_duration % 60:02}',
         'mode': n_mode,
+        'all_latencies': all_latencies,
+        'all_times_checked': all_times_checked,
     }
     
     with open(DataBase.json_file, 'r') as json_file:

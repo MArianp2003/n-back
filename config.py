@@ -5,7 +5,8 @@ class Number_prop:
 class Time:
     countdown_time = 5 * 60 # seconds
     black_screen = 10 * 60 * 1000 # 10 minutes
-    flicker_in_black = 30 * 1000 # 30 seconds
+    flicker_in_black = 1 * 30 * 1000 # 30 seconds
+    
 class Mode:
     n_back_mode = 3
 
@@ -26,6 +27,8 @@ key_headers = [
     'hit_catched',
     'time_duration',
     'mode',
+    'all_latencies',
+    'all_times_checked',
 ]
 
 class MonitorMode:
