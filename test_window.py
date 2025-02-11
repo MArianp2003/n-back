@@ -135,7 +135,7 @@ class Test_Window:
             self.flicker(self.message_label)
         self.check_button.config(state='normal')
         self.number_label.config(fg=Color.white)
-        self.data = self.generate_sequence()
+        self.data = self.generate_sequence(self.n_mode)
         self.data_index = 0
         self.update_timer()
         self.start_show_number()
@@ -167,50 +167,67 @@ class Test_Window:
         self.data_index += 1
         return random_number
         
-
-    def generate_sequence(self):
-        # Define the chunks for match positions
-        positions = list(range(4, 93))  # Positions 4 to 92 inclusive
-        chunk1 = positions[:18]    # 4-21 (18 positions)
-        chunk2 = positions[18:36]  # 22-39
-        chunk3 = positions[36:54]  # 40-57
-        chunk4 = positions[54:72]  # 58-75
-        chunk5 = positions[72:]    # 76-92 (17 positions)
+    def generate_sequence(self, n, total_length=92, target_matches=20):
+        possible_positions = total_length - n
+        if possible_positions < target_matches:
+            raise ValueError(f"Cannot generate {target_matches} {n}-back matches. Maximum possible is {possible_positions}.")
         
-        # Select 4 positions from each chunk
-        match_positions = []
-        for chunk in [chunk1, chunk2, chunk3, chunk4, chunk5]:
-            selected = random.sample(chunk, 4)
-            match_positions.extend(selected)
+        # Generate target positions spread evenly
+        if target_matches == 0:
+            target_positions = []
+        else:
+            step = (possible_positions - 1) / (target_matches - 1) if target_matches > 1 else 0
+            target_positions = [n + int(round(i * step)) for i in range(target_matches)]
         
-        match_positions.sort()  # Sort for ordered processing
+        # Remove duplicates and sort
+        unique_positions = list(set(target_positions))
+        unique_positions.sort()
+        
+        # Fill in missing positions if necessary
+        while len(unique_positions) < target_matches:
+            for pos in range(n, total_length):
+                if pos not in unique_positions:
+                    unique_positions.append(pos)
+                    break
+            unique_positions.sort()
+        
+        # Trim to the exact number of target matches
+        target_positions = unique_positions[:target_matches]
         
         # Generate the sequence
-        sequence = [None] * 93
-        for i in range(93):
-            if i in match_positions:
-                sequence[i] = sequence[i-4]
-            else:
-                if i < 4:
-                    sequence[i] = random.randint(0, 9)
-                else:
-                    prev = sequence[i-4]
-                    available = [num for num in range(10) if num != prev]
-                    sequence[i] = random.choice(available)
+        sequence = []
+        # First n elements are random
+        for _ in range(n):
+            sequence.append(random.randint(0, 9))
         
-        # Validation checks
-        assert len(sequence) == 93, "Sequence length is incorrect."
-        count = sum(1 for i in range(4, 93) if sequence[i] == sequence[i-4])
-        assert count == 20, f"Found {count} 4-backs instead of 20."
+        # Generate remaining elements
+        for i in range(n, total_length):
+            if i in target_positions:
+                # Match the n-back
+                sequence.append(sequence[i - n])
+            else:
+                # Choose a different number from the n-back
+                prev = sequence[i - n]
+                available = [num for num in range(10) if num != prev]
+                sequence.append(random.choice(available))
+        
+        # Verify the sequence
+        assert len(sequence) == total_length, f"Invalid sequence length: {len(sequence)}"
+        actual_matches = sum(1 for i in range(n, total_length) if sequence[i] == sequence[i - n])
+        assert actual_matches == target_matches, f"Invalid number of matches: {actual_matches}"
+        
         return sequence
+
     
     # Validate the sequence
     @staticmethod
-    def validate_sequence():
-        sequence = Test_Window.generate_sequence()
-        print("Generated Sequence:", sequence)
-        print("Length:", len(sequence))
-        print("4-back Count:", sum(1 for i in range(4, 93) if sequence[i] == sequence[i-4]))
+    def validate_sequence(n):
+        seq = Test_Window.generate_sequence(n)
+        print("Generated Sequence:")
+        print(seq)
+        print(f"Length of sequence: {len(seq)}")
+        matches = sum(1 for i in range(n, len(seq)) if seq[i] == seq[i - n])
+        print(f"Number of {n}-back matches: {matches}")
 
     
     def on_closing(self):
