@@ -8,7 +8,7 @@ class Time:
     flicker_in_black = 1 * 30 * 1000 # 30 seconds
     
 class Mode:
-    n_back_mode = 3
+    n_back_mode = 4
 
 class DigitRound:
     digit_round = 3

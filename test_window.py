@@ -135,7 +135,7 @@ class Test_Window:
             self.flicker(self.message_label)
         self.check_button.config(state='normal')
         self.number_label.config(fg=Color.white)
-        self.data = self.generate_3back_sequence()
+        self.data = self.generate_sequence()
         self.data_index = 0
         self.update_timer()
         self.start_show_number()
@@ -167,59 +167,50 @@ class Test_Window:
         self.data_index += 1
         return random_number
         
-    def generate_3back_sequence(self):
-        total_numbers = 92  # Total length of the sequence
-        numbers_per_group = 18  # Numbers in each group
-        required_3backs_per_group = 4  # Required 3-back occurrences per group
-        range_of_numbers = 10  # Range of numbers (0 to 9)
-        
-        sequence = []
-        num_full_groups = total_numbers // numbers_per_group
-        leftover_numbers = total_numbers % numbers_per_group  # Remaining numbers after full groups
 
-        # Generate full groups
-        for group in range(num_full_groups):
-            group_numbers = []
-            three_back_indices = random.sample(range(numbers_per_group - 3), required_3backs_per_group)
-            current_group_3backs = 0
-            
-            for i in range(numbers_per_group):
-                if i >= 3 and current_group_3backs < required_3backs_per_group and i - 3 in three_back_indices:
-                    group_numbers.append(group_numbers[i - 3])
-                    current_group_3backs += 1
-                else:
-                    new_number = random.randint(0, range_of_numbers - 1)
-                    while i >= 3 and new_number == group_numbers[i - 3]:
-                        new_number = random.randint(0, range_of_numbers - 1)
-                    group_numbers.append(new_number)
-            
-            sequence.extend(group_numbers)
+    def generate_sequence(self):
+        # Define the chunks for match positions
+        positions = list(range(4, 93))  # Positions 4 to 92 inclusive
+        chunk1 = positions[:18]    # 4-21 (18 positions)
+        chunk2 = positions[18:36]  # 22-39
+        chunk3 = positions[36:54]  # 40-57
+        chunk4 = positions[54:72]  # 58-75
+        chunk5 = positions[72:]    # 76-92 (17 positions)
         
-        # Handle leftover numbers to ensure total length is 92
-        if leftover_numbers > 0:
-            leftover_indices = random.sample(range(leftover_numbers - 3), min(1, leftover_numbers - 3)) if leftover_numbers >= 3 else []
-            current_leftover_3backs = 0
-            
-            for i in range(leftover_numbers):
-                if i >= 3 and current_leftover_3backs < len(leftover_indices) and i - 3 in leftover_indices:
-                    sequence.append(sequence[-3])  # Match with 3-back
-                    current_leftover_3backs += 1
+        # Select 4 positions from each chunk
+        match_positions = []
+        for chunk in [chunk1, chunk2, chunk3, chunk4, chunk5]:
+            selected = random.sample(chunk, 4)
+            match_positions.extend(selected)
+        
+        match_positions.sort()  # Sort for ordered processing
+        
+        # Generate the sequence
+        sequence = [None] * 93
+        for i in range(93):
+            if i in match_positions:
+                sequence[i] = sequence[i-4]
+            else:
+                if i < 4:
+                    sequence[i] = random.randint(0, 9)
                 else:
-                    new_number = random.randint(0, range_of_numbers - 1)
-                    while i >= 3 and new_number == sequence[-3]:
-                        new_number = random.randint(0, range_of_numbers - 1)
-                    sequence.append(new_number)
-        print(sequence)
+                    prev = sequence[i-4]
+                    available = [num for num in range(10) if num != prev]
+                    sequence[i] = random.choice(available)
+        
+        # Validation checks
+        assert len(sequence) == 93, "Sequence length is incorrect."
+        count = sum(1 for i in range(4, 93) if sequence[i] == sequence[i-4])
+        assert count == 20, f"Found {count} 4-backs instead of 20."
         return sequence
     
     # Validate the sequence
     @staticmethod
-    def validate_sequence(sequence):
-        three_back_count = 0
-        for i in range(3, len(sequence)):
-            if sequence[i] == sequence[i - 3]:
-                three_back_count += 1
-        print(f"Total 3-back occurrences: {three_back_count}")
+    def validate_sequence():
+        sequence = Test_Window.generate_sequence()
+        print("Generated Sequence:", sequence)
+        print("Length:", len(sequence))
+        print("4-back Count:", sum(1 for i in range(4, 93) if sequence[i] == sequence[i-4]))
 
     
     def on_closing(self):

@@ -22,7 +22,8 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n
     hit = len(n_back_is_correct)
     false_alarm = len(catched) - len(n_back_is_correct)
     miss = len(happen_n_back) - len(n_back_is_correct)
-    correct_rejection = len(data) - n_mode - len(happen_n_back)
+    # -false_alarm
+    correct_rejection = len(data) - n_mode - len(happen_n_back) - false_alarm
     
     print(data)
     print(json.dumps(catched, indent=4))

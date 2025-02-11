@@ -60,19 +60,21 @@ class Login_window:
         
         self.mode_label = tk.Label(
             master=self.mode_frame,
-            font=("Helvetica", 12, 'bold'),
-            text='Mode:',
+            text="n-back Mode:",
+            font=("Arial", 16),
             background=Color.green,
         )
         
-        self.mode_entry = tk.Entry(
-            master=self.mode_frame,
-            width=15,
-            font=("Helvetica", 16),
-        )
-        self.mode_entry.insert(0, str(Mode.n_back_mode))
-        self.mode_entry.config(state='readonly')
+        self.mode_var = tk.StringVar(value="3")
         
+        self.mode_dropdown = ttk.Combobox(
+            master=self.mode_frame,
+            textvariable=self.mode_var, 
+            values=["3", "4"], 
+            state="readonly",
+            width=6
+        )
+
         self.upload_button = tk.Button(
             master=self.root, 
             font=("Helvetica", 12, 'bold'),
@@ -186,8 +188,8 @@ class Login_window:
         self.time_frame.place(relx=0.2, rely=0.1, anchor='center')
         
         self.mode_label.pack(side='left')
-        self.mode_entry.pack(side='left')
-        self.mode_frame.place(relx=0.2, rely=0.25, anchor='center')
+        self.mode_dropdown.pack(side='left')
+        self.mode_frame.place(relx=0.2, rely=0.27, anchor='center')
         
         self.frequency_label.pack(side='left')
         self.frequency_dropdown.pack(side='left')
@@ -263,9 +265,9 @@ class Login_window:
             self.debug = self.debug_mode_var.get()
             self.time_left = self.m * 60 + self.s - 1
             if self.debug == 'ON':
-                self.time_left = 13
+                self.time_left = 1 * 13
             self.countdown_time = 0
-            self.n_mode = int(self.mode_entry.get())
+            self.n_mode = int(self.mode_dropdown.get())
             
             current_directory = os.path.dirname(os.path.abspath(__file__))
             
