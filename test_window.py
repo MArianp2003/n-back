@@ -18,7 +18,7 @@ except ImportError:
 
 
 class Test_Window:
-    def __init__(self, name, frequency, condition, countdown_time, n_mode, time_left, mp3_file, debug):
+    def __init__(self, name, frequency, condition, countdown_time, n_mode, time_left, mp3_file, debug, directory):
         pygame.mixer.init()
         self.name = name
         self.frequency = frequency
@@ -29,7 +29,8 @@ class Test_Window:
         self.force_quit = False
         self.mp3_file = mp3_file
         self.debug = debug
-                
+        self.current_dir = directory
+        
         self.new_number_lock = False
         self.latencies_at_time = list()
         self.data = list()
@@ -147,7 +148,7 @@ class Test_Window:
         elif not self.force_quit:
             if self.condition in [2, 4]:
                 self.stop_condition()
-            self.result = check_all_n_back(self.name, self.data[:self.data_index], self.catch, self.time_left, self.n_mode)
+            self.result = check_all_n_back(self.name, self.data[:self.data_index], self.catch, self.time_left, self.n_mode, self.current_dir)
             self.number_label.config(font=('Arial', 100))
             self.number_label.config(fg=Color.black)
             self.number_label.config(text='Thank You!')

@@ -1,8 +1,9 @@
 from config import DataBase, key_headers
 import json
 import csv
+import os
 
-def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n_mode: int):
+def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n_mode: int, dir):
     
     happen_n_back = dict()
     for i in range(len(data) - n_mode):
@@ -43,10 +44,12 @@ def check_all_n_back(name: str, data: list, catched: dict, time_duration: int, n
         'all_times_checked': all_times_checked,
     }
     
-    with open(DataBase.json_file, 'r') as json_file:
+    file_path = os.path.join(dir, DataBase.json_file)
+    with open(file_path, 'r') as json_file:
         data_list = json.load(json_file)
-    
-    with open(DataBase.csv_file, 'a', newline='') as csv_file:
+
+    file_path = os.path.join(dir, DataBase.csv_file)    
+    with open(file_path, 'a', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=key_headers)
         writer.writerow(result)
     

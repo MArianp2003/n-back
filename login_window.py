@@ -269,19 +269,20 @@ class Login_window:
             self.countdown_time = 0
             self.n_mode = int(self.mode_dropdown.get())
             
-            current_directory = os.path.dirname(os.path.abspath(__file__))
+            self.current_directory = os.path.dirname(os.path.abspath(__file__))
+            print(self.current_directory)
             
-            file_path = os.path.join(current_directory, DataBase.json_file)
+            file_path = os.path.join(self.current_directory, DataBase.json_file)
             if not os.path.exists(file_path):
                 print('json database file doesn\'t exist, creating...')
-                with open(DataBase.json_file, 'w') as json_file:
+                with open(file_path, 'w') as json_file:
                     json_file.write(json.dumps([], indent=4))
                 print('json database file created successfully.')
             
-            file_path = os.path.join(current_directory, DataBase.csv_file)
+            file_path = os.path.join(self.current_directory, DataBase.csv_file)
             if not os.path.exists(file_path):
                 print('csv database file doesn\'t exist, creating...')
-                with open(DataBase.csv_file, 'w') as csv_file:
+                with open(file_path, 'w') as csv_file:
                     writer = csv.DictWriter(csv_file, fieldnames=key_headers)
                     writer.writeheader()
                 print('csv database file created successfully.')
