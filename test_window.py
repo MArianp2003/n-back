@@ -92,24 +92,27 @@ class Test_Window:
             foreground=Color.white
         )
 
-        match condition:
-            case 1:
-                self.__start_task()
-            case 2:
-                self.play_condition()
-                self.__start_task()
-            case 3 | 4:
-                self.interval = int(1000 / (2 * self.frequency))
-                self.root.configure(background=Color.black)
-                self.play_condition()
-                if self.debug == 'ON':
-                    self.root.after(2 * 1000, lambda: self.flicker_30sec(self.root)) # 2 last seconds flicker and 4 seconds black screen in debug mode 
-                    self.root.after(4 * 1000, self.start_condition_3)
-                elif self.debug == 'OFF':
-                    self.root.after(Time.black_screen - Time.flicker_in_black, lambda: self.flicker_30sec(self.root)) # 9 min and 30 seconds black
-                    self.root.after(Time.black_screen, self.start_condition_3)
-                
-                
+        # match condition
+            # case 1:
+            #     self.__start_task()
+            # case 2:
+            #     self.play_condition()
+            #     self.__start_task()
+            # case 3 | 4:
+            #     self.interval = int(1000 / (2 * self.frequency))
+            #     self.root.configure(background=Color.black)
+            #     self.play_condition()
+            #     if self.debug == 'ON':
+            #         self.root.after(2 * 1000, lambda: self.flicker_30sec(self.root)) # 2 last seconds flicker and 4 seconds black screen in debug mode 
+            #         self.root.after(4 * 1000, self.start_condition_3)
+            #     elif self.debug == 'OFF':
+            #         self.root.after(Time.black_screen - Time.flicker_in_black, lambda: self.flicker_30sec(self.root)) # 9 min and 30 seconds black
+            #         self.root.after(Time.black_screen, self.start_condition_3)
+        
+        if self.condition in [3, 4]:
+            self.play_condition()    
+        self.__start_task()
+        
     def start_condition_3(self):
         if self.condition == 3:
             self.stop_condition()
